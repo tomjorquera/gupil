@@ -1,10 +1,15 @@
 function listenForClicks() {
   document.addEventListener("click", (e) => {
     const optionName = e.target.textContent;
-    console.log(optionName);
     switch (optionName) {
       case "Summarize":
-        console.log("Selected Summarize");
+        chrome.tabs
+          .query({ active: true, currentWindow: true })
+          .then((tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, {
+              contentquery: "summarize",
+            });
+          });
         return;
       case "ELI5":
         console.log("Selected ELI5");
@@ -20,13 +25,12 @@ function listenForClicks() {
 }
 
 // localize
-document.querySelectorAll('[data-locale]').forEach(elem => {
-  elem.innerText = browser.i18n.getMessage(elem.dataset.locale)
-})
-
+document.querySelectorAll("[data-locale]").forEach((elem) => {
+  elem.innerText = chrome.i18n.getMessage(elem.dataset.locale);
+});
 
 //browser.tabs
-       //.executeScript({ file: "/content_scripts/gupil.js" })
-       //.then(listenForClicks);
+//.executeScript({ file: "/content_scripts/gupil.js" })
+//.then(listenForClicks);
 
 listenForClicks();
