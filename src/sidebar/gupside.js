@@ -1,14 +1,41 @@
 async function updateContent() {
-  const current_window = await browser.windows.getCurrent();
-  const current_tab = (
+  const currentWindow = await browser.windows.getCurrent();
+  const currentTab = (
     await browser.tabs.query({
-      windowId: current_window.id,
+      windowId: currentWindow.id,
       active: true,
     })
   )[0];
-  const contentBox = document.querySelector("#content");
-  const storedInfo = await browser.storage.session.get(current_tab.url);
-  contentBox.textContent = storedInfo[current_tab.url];
+  const storage = await browser.storage.session.get(currentTab.url);
+  const currentStorage = storage[currentTab.url];
+  if (currentStorage) {
+    const contentBox = document.querySelector("#content");
+    contentBox.textContent = "";
+    for (entry of currentStorage.history) {
+      appendMsg(contentBox, entry.role, entry.content);
+    }
+    if (currentStorage.ongoingReply) {
+      appendMsg(contentBox, "assistant", currentStorage.ongoingReply);
+    }
+  }
+}
+
+function appendMsg(container, role, content) {
+  const msg = document.createElement("div");
+  msg.setAttribute("class", `msg msg-${role}`);
+
+  const roleNode = document.createElement("div");
+  roleNode.appendChild(document.createTextNode(role));
+  roleNode.setAttribute("class", "msg-role");
+
+  const contentNode = document.createElement("div");
+  contentNode.appendChild(document.createTextNode(content));
+  contentNode.setAttribute("class", "msg-content");
+
+  msg.appendChild(roleNode);
+  msg.appendChild(contentNode);
+
+  container.appendChild(msg);
 }
 
 function onStorageChange(changes, area) {

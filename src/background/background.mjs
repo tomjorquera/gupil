@@ -9,28 +9,44 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 const model = new Ollama("http://localhost:11434", "openhermes:latest");
 
 async function summarize(content) {
-  const current_window = await browser.windows.getCurrent();
-  const current_tab = (
+  const currentWindow = await browser.windows.getCurrent();
+  const currentTab = (
     await browser.tabs.query({
-      windowId: current_window.id,
+      windowId: currentWindow.id,
       active: true,
     })
   )[0];
-  const storedInfo = await browser.storage.local.get(current_tab.url);
-  const current_storage = storedInfo[Object.keys(storedInfo)[0]];
+  const storedInfo = await browser.storage.session.get(currentTab.url);
+  let currentStorage = storedInfo[currentTab.url];
+  if (!currentStorage) {
+    currentStorage = {
+      history: [],
+    };
+  }
+
+  const sys = {
+    role: "system",
+    content: `You are an in-browser assistant helping a user interact with a web page. Here is the page content ${content}`,
+  };
 
   const query = {
     role: "user",
-    content: "Please summarize the following content:\n" + content,
+    content: "Please summarize the page content.",
   };
 
-  let reply = "";
-  for await (const chunk of model.chat([query])) {
-    console.log(chunk);
-    reply += chunk;
-
-    const to_store = {};
-    to_store[current_tab.url] = reply;
-    browser.storage.session.set(to_store);
+  currentStorage.history.push(query);
+  let ongoingReply = "";
+  for await (const chunk of model.chat([sys, query])) {
+    ongoingReply += chunk;
+    currentStorage.ongoingReply = ongoingReply;
+    storedInfo[currentTab.url] = currentStorage;
+    browser.storage.session.set(storedInfo);
   }
+  currentStorage.ongoingReply = null;
+  currentStorage.history.push({
+    role: "assistant",
+    content: ongoingReply,
+  });
+  storedInfo[currentTab.url] = currentStorage;
+  browser.storage.session.set(storedInfo);
 }
