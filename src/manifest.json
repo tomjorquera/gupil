@@ -17,12 +17,12 @@
     }
   },
 
-  "permissions": ["activeTab"],
-  "host_permissions": ["*://*/*"],
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["<all_urls>"],
 
   "content_scripts": [
     {
-      "matches": ["*://*/*"],
+      "matches": ["<all_urls>"],
       "js": ["./content_scripts/gupil.js"]
     }
   ],
@@ -37,5 +37,11 @@
     "default_icon": "icons/gupil.svg",
     "default_title": "Gupil",
     "default_popup": "popup/gupop.html"
+  },
+
+  "sidebar_action": {
+    "default_title": "Gupil",
+    "default_panel": "sidebar/gupside.html",
+    "default_icon": "icons/gupil.svg"
   }
 }
