@@ -11,8 +11,10 @@
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if ("contentquery" in request) {
-      query = {};
-      query[request["contentquery"]] = document.getRootNode().body.innerHTML;
+      query = {
+        action: request.contentquery,
+        pagecontent: document.getRootNode().body.innerHTML,
+      };
       chrome.runtime.sendMessage(query);
     }
     return true;

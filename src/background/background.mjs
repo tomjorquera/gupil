@@ -1,14 +1,22 @@
 import { Ollama } from "/modules/provider/ollama.mjs";
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if ("summarize" in request) {
-    summarize(request["summarize"]);
+  if ("action" in request) {
+    if ((!request.action) in actions) {
+      throw new Error(`Undefined action ${request.query}`);
+    }
+    execute(request.action, request.pagecontent);
   }
 });
 
 const model = new Ollama("http://localhost:11434", "openhermes:latest");
 
-async function summarize(content) {
+const actions = {
+  summarize: "Please summarize the page content.",
+  eli5: "Please describe the page content in simple terms.",
+};
+
+async function execute(action, content) {
   const currentWindow = await browser.windows.getCurrent();
   const currentTab = (
     await browser.tabs.query({
@@ -31,7 +39,7 @@ async function summarize(content) {
 
   const query = {
     role: "user",
-    content: "Please summarize the page content.",
+    content: actions[action],
   };
 
   currentStorage.history.push(query);
