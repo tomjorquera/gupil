@@ -17,7 +17,7 @@
     }
   },
 
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["activeTab", "sidePanel", "storage"],
   "host_permissions": ["<all_urls>"],
 
   "content_scripts": [
@@ -42,6 +42,11 @@
   "sidebar_action": {
     "default_title": "Gupil",
     "default_panel": "sidebar/gupside.html",
+    "default_icon": "icons/gupil.svg"
+  },
+  "side_panel": {
+    "default_title": "Gupil",
+    "default_path": "sidebar/gupside.html",
     "default_icon": "icons/gupil.svg"
   }
 }

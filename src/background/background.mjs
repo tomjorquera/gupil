@@ -1,5 +1,19 @@
 import { Ollama } from "/modules/provider/ollama.mjs";
 
+// Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
+ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
+  const reader = this.getReader();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) return;
+      yield value;
+    }
+  } finally {
+    reader.releaseLock();
+  }
+};
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if ("action" in request) {
     if ((!request.action) in actions) {
@@ -17,14 +31,14 @@ const actions = {
 };
 
 async function execute(action, content) {
-  const currentWindow = await browser.windows.getCurrent();
+  const currentWindow = await chrome.windows.getCurrent();
   const currentTab = (
-    await browser.tabs.query({
+    await chrome.tabs.query({
       windowId: currentWindow.id,
       active: true,
     })
   )[0];
-  const storedInfo = await browser.storage.session.get(currentTab.url);
+  const storedInfo = await chrome.storage.session.get(currentTab.url);
   let currentStorage = storedInfo[currentTab.url];
   if (!currentStorage) {
     currentStorage = {
@@ -48,7 +62,7 @@ async function execute(action, content) {
     ongoingReply += chunk;
     currentStorage.ongoingReply = ongoingReply;
     storedInfo[currentTab.url] = currentStorage;
-    browser.storage.session.set(storedInfo);
+    chrome.storage.session.set(storedInfo);
   }
   currentStorage.ongoingReply = null;
   currentStorage.history.push({
@@ -56,5 +70,5 @@ async function execute(action, content) {
     content: ongoingReply,
   });
   storedInfo[currentTab.url] = currentStorage;
-  browser.storage.session.set(storedInfo);
+  chrome.storage.session.set(storedInfo);
 }

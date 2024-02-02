@@ -1,12 +1,12 @@
 async function updateContent() {
-  const currentWindow = await browser.windows.getCurrent();
+  const currentWindow = await chrome.windows.getCurrent();
   const currentTab = (
-    await browser.tabs.query({
+    await chrome.tabs.query({
       windowId: currentWindow.id,
       active: true,
     })
   )[0];
-  const storage = await browser.storage.session.get(currentTab.url);
+  const storage = await chrome.storage.session.get(currentTab.url);
   const currentStorage = storage[currentTab.url];
   if (currentStorage) {
     const contentBox = document.querySelector("#content");
@@ -42,7 +42,7 @@ function appendMsg(container, role, content) {
 function onStorageChange(changes, area) {
   updateContent();
 }
-browser.storage.onChanged.addListener(onStorageChange);
+chrome.storage.onChanged.addListener(onStorageChange);
 
-browser.tabs.onActivated.addListener(updateContent);
-browser.tabs.onUpdated.addListener(updateContent);
+chrome.tabs.onActivated.addListener(updateContent);
+chrome.tabs.onUpdated.addListener(updateContent);
