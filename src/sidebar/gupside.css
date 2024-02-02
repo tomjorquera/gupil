@@ -1,0 +1,30 @@
+#content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 5%;
+  padding: 3%;
+  margin: 1%;
+}
+
+.msg-assistant {
+  background: #eeeeee;
+  color: #111111;
+  align-self: flex-start;
+}
+.msg-user {
+  background: #60a0ff;
+  color: #ffffff;
+  align-self: flex-end;
+}
+
+.msg-role {
+  font-weight: bold;
+  margin-bottom: 3%;
+}

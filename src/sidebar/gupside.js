@@ -21,11 +21,12 @@ async function updateContent() {
 }
 
 function appendMsg(container, role, content) {
+  const displayName = role == "user" ? "You" : "Gupil";
   const msg = document.createElement("div");
   msg.setAttribute("class", `msg msg-${role}`);
 
   const roleNode = document.createElement("div");
-  roleNode.appendChild(document.createTextNode(role));
+  roleNode.appendChild(document.createTextNode(displayName));
   roleNode.setAttribute("class", "msg-role");
 
   const contentNode = document.createElement("div");
