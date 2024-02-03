@@ -28,3 +28,16 @@
   font-weight: bold;
   margin-bottom: 3%;
 }
+
+#msg-form {
+  display: flex;
+  padding: 10px;
+}
+
+#msg-form * {
+  margin: 1%;
+}
+
+#msg-input {
+  flex: 1;
+}

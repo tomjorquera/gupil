@@ -1,3 +1,23 @@
+const msgForm = document.getElementById("msg-form");
+const msgInput = document.getElementById("msg-input");
+msgForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const msgText = msgInput.value;
+  if (!msgText) return;
+  msgInput.value = "";
+  send_query(msgText);
+});
+
+function send_query(msg) {
+  chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      type: "contentquery",
+      request: "chat",
+      content: msg,
+    });
+  });
+}
+
 async function updateContent() {
   const currentWindow = await chrome.windows.getCurrent();
   const currentTab = (
