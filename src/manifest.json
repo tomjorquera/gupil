@@ -37,7 +37,8 @@
   "action": {
     "default_icon": "icons/gupil.svg",
     "default_title": "Gupil",
-    "default_popup": "popup/gupop.html"
+    "default_popup": "popup/gupop.html",
+    "show_matches": ["<all_urls>"]
   },
 
   "sidebar_action": {
