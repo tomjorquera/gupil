@@ -21,7 +21,7 @@
     }
     query = {
       ...request,
-      pageContent: document.getRootNode().body.innerHTML,
+      pageContent: document.getRootNode().body.innerText,
     };
     chrome.runtime.sendMessage(query);
     return true;
