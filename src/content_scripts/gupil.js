@@ -10,13 +10,20 @@
   window.gupilHasRun = true;
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if ("contentquery" in request) {
-      query = {
-        action: request.contentquery,
-        pagecontent: document.getRootNode().body.innerHTML,
-      };
-      chrome.runtime.sendMessage(query);
+    if (
+      !(
+        "type" in request &&
+        request.type == "contentquery" &&
+        !("pageContent" in request)
+      )
+    ) {
+      return true;
     }
+    query = {
+      ...request,
+      pageContent: document.getRootNode().body.innerHTML,
+    };
+    chrome.runtime.sendMessage(query);
     return true;
   });
 })();

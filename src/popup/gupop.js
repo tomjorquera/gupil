@@ -1,7 +1,9 @@
 function call_to_action(action) {
   chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
-      contentquery: action,
+      type: "contentquery",
+      request: "action",
+      content: action,
     });
   });
 }

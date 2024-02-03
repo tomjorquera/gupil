@@ -15,12 +15,27 @@ ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if ("action" in request) {
-    if ((!request.action) in actions) {
-      throw new Error(`Undefined action ${request.query}`);
-    }
-    execute(request.action, request.pagecontent);
+  if (
+    !(
+      "type" in request &&
+      request.type == "contentquery" &&
+      "pageContent" in request
+    )
+  ) {
+    return;
   }
+  if (request.request == "action") {
+    if (!(request.content in actions)) {
+      throw new Error(`Undefined action ${request.content}`);
+    }
+    execute(actions[request.content], request.pageContent);
+    return;
+  }
+  if (request.request == "chat") {
+    execute(request.content, request.pageContent);
+    return;
+  }
+  throw new Error(`Unknown request ${request}`);
 });
 
 const model = new Ollama("http://localhost:11434", "openhermes:latest");
@@ -30,7 +45,7 @@ const actions = {
   eli5: "Please describe the page content in simple terms.",
 };
 
-async function execute(action, content) {
+async function execute(content, pageContent) {
   const currentWindow = await chrome.windows.getCurrent();
   const currentTab = (
     await chrome.tabs.query({
@@ -48,12 +63,12 @@ async function execute(action, content) {
 
   const sys = {
     role: "system",
-    content: `You are an in-browser assistant helping a user interact with a web page. Here is the page content ${content}`,
+    content: `You are an in-browser assistant helping a user interact with a web page. Here is the page content ${pageContent}`,
   };
 
   const query = {
     role: "user",
-    content: actions[action],
+    content,
   };
 
   currentStorage.history.push(query);
