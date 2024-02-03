@@ -10,6 +10,7 @@ function call_to_action(action) {
 
 function listenForClicks() {
   document.addEventListener("click", (e) => {
+    chrome.sidebarAction.open();
     const optionName = e.target.textContent;
     switch (optionName) {
       case "Summarize":
