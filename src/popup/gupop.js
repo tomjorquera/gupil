@@ -20,6 +20,12 @@ const availableActions = [
     action: () =>
       call_to_action("Please describe the page content in simple terms."),
   },
+  {
+    id: "translate",
+    title: chrome.i18n.getMessage("cmdTranslate"),
+    action: () =>
+      call_to_action("Please translate the page content in english."),
+  },
 ];
 
 const chatBtn = document.getElementById("action-chat");
