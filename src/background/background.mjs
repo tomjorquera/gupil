@@ -24,26 +24,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   ) {
     return;
   }
-  if (request.request == "action") {
-    if (!(request.content in actions)) {
-      throw new Error(`Undefined action ${request.content}`);
-    }
-    execute(actions[request.content], request.pageContent);
-    return;
-  }
-  if (request.request == "chat") {
-    execute(request.content, request.pageContent);
-    return;
-  }
-  throw new Error(`Unknown request ${request}`);
+  execute(request.content, request.pageContent);
 });
 
 const model = new Ollama("http://localhost:11434", "openhermes:latest");
-
-const actions = {
-  summarize: "Please summarize the page content.",
-  eli5: "Please describe the page content in simple terms.",
-};
 
 async function execute(content, pageContent) {
   const currentWindow = await chrome.windows.getCurrent();

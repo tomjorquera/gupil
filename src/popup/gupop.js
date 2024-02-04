@@ -3,7 +3,6 @@ function call_to_action(action) {
   chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
       type: "contentquery",
-      request: "action",
       content: action,
     });
   });
@@ -13,12 +12,13 @@ const availableActions = [
   {
     id: "summarize",
     title: chrome.i18n.getMessage("cmdSummarize"),
-    action: () => call_to_action("summarize"),
+    action: () => call_to_action("Please summarize the page content."),
   },
   {
     id: "eli5",
     title: chrome.i18n.getMessage("cmdELI5"),
-    action: () => call_to_action("eli5"),
+    action: () =>
+      call_to_action("Please describe the page content in simple terms."),
   },
 ];
 

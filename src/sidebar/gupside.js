@@ -12,7 +12,6 @@ function send_query(msg) {
   chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
       type: "contentquery",
-      request: "chat",
       content: msg,
     });
   });
