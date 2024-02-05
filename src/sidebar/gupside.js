@@ -23,6 +23,7 @@ Promise.all([
       if (currentState.ongoingReply) {
         appendMsg(contentBox, "assistant", currentState.ongoingReply);
       }
+      window.scrollTo(0, document.body.scrollHeight);
     }
   }
 
