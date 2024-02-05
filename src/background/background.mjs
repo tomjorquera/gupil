@@ -1,3 +1,4 @@
+import { onReadyMessage } from "/modules/messaging.mjs";
 import { Ollama } from "/modules/provider/ollama.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
@@ -14,31 +15,13 @@ ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
   }
 };
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (
-    !(
-      "type" in request &&
-      request.type == "contentquery" &&
-      "pageContent" in request
-    )
-  ) {
-    return;
-  }
-  execute(request.content, request.pageContent);
-});
-
 const model = new Ollama("http://localhost:11434", "openhermes:latest");
 
-async function execute(content, pageContent) {
-  const currentWindow = await chrome.windows.getCurrent();
-  const currentTab = (
-    await chrome.tabs.query({
-      windowId: currentWindow.id,
-      active: true,
-    })
-  )[0];
-  const storedInfo = await chrome.storage.session.get(currentTab.url);
-  let currentStorage = storedInfo[currentTab.url];
+onReadyMessage(async (msg) => {
+  const { tabId, userContent, pageContent } = msg;
+
+  const storedInfo = await chrome.storage.session.get(tabId);
+  let currentStorage = storedInfo[tabId];
   if (!currentStorage) {
     currentStorage = {
       history: [],
@@ -52,7 +35,7 @@ async function execute(content, pageContent) {
 
   const query = {
     role: "user",
-    content,
+    content: userContent,
   };
 
   currentStorage.history.push(query);
@@ -60,7 +43,7 @@ async function execute(content, pageContent) {
   for await (const chunk of model.chat([sys, query])) {
     ongoingReply += chunk;
     currentStorage.ongoingReply = ongoingReply;
-    storedInfo[currentTab.url] = currentStorage;
+    storedInfo[tabId] = currentStorage;
     chrome.storage.session.set(storedInfo);
   }
   currentStorage.ongoingReply = null;
@@ -68,6 +51,6 @@ async function execute(content, pageContent) {
     role: "assistant",
     content: ongoingReply,
   });
-  storedInfo[currentTab.url] = currentStorage;
+  storedInfo[tabId] = currentStorage;
   chrome.storage.session.set(storedInfo);
-}
+});
