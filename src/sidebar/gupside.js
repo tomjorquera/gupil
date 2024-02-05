@@ -1,4 +1,8 @@
-import("/modules/messaging.mjs").then((messaging) => {
+Promise.all([
+  import("/modules/messaging.mjs"),
+  import("/modules/state.mjs"),
+]).then(async (modules) => {
+  const [messaging, state] = modules;
   const msgForm = document.getElementById("msg-form");
   const msgInput = document.getElementById("msg-input");
   msgForm.addEventListener("submit", (event) => {
@@ -9,24 +13,15 @@ import("/modules/messaging.mjs").then((messaging) => {
     messaging.sendRequest(msgText);
   });
 
-  async function updateContent() {
-    const currentWindow = await chrome.windows.getCurrent();
-    const currentTab = (
-      await chrome.tabs.query({
-        windowId: currentWindow.id,
-        active: true,
-      })
-    )[0].id.toString();
-    const storage = await chrome.storage.session.get(currentTab);
-    const currentStorage = storage[currentTab];
-    if (currentStorage) {
+  async function update(currentState) {
+    if (currentState) {
       const contentBox = document.querySelector("#content");
       contentBox.textContent = "";
-      for (entry of currentStorage.history) {
+      for (entry of currentState.history) {
         appendMsg(contentBox, entry.role, entry.content);
       }
-      if (currentStorage.ongoingReply) {
-        appendMsg(contentBox, "assistant", currentStorage.ongoingReply);
+      if (currentState.ongoingReply) {
+        appendMsg(contentBox, "assistant", currentState.ongoingReply);
       }
     }
   }
@@ -50,11 +45,12 @@ import("/modules/messaging.mjs").then((messaging) => {
     container.appendChild(msg);
   }
 
-  function onStorageChange(changes, area) {
-    updateContent();
-  }
-  chrome.storage.onChanged.addListener(onStorageChange);
+  state.listenToChanges(update);
 
-  chrome.tabs.onActivated.addListener(updateContent);
-  chrome.tabs.onUpdated.addListener(updateContent);
+  chrome.tabs.onActivated.addListener(
+    async () => await state.currentTabState().then(update),
+  );
+  chrome.tabs.onUpdated.addListener(
+    async () => await state.currentTabState().then(update),
+  );
 });

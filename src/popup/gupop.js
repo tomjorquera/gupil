@@ -1,6 +1,9 @@
 import("/modules/messaging.mjs").then((messaging) => {
   async function call_to_action(action) {
-    chrome.sidebarAction.open();
+    if ("sidebarAction" in chrome) {
+      // only on Firefox
+      chrome.sidebarAction.open();
+    }
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     messaging.sendRequest(action);
   }

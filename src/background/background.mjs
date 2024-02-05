@@ -1,4 +1,5 @@
 import { onReadyMessage } from "/modules/messaging.mjs";
+import { updateHistory, updateOngoing } from "/modules/state.mjs";
 import { Ollama } from "/modules/provider/ollama.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
@@ -20,14 +21,6 @@ const model = new Ollama("http://localhost:11434", "openhermes:latest");
 onReadyMessage(async (msg) => {
   const { tabId, userContent, pageContent } = msg;
 
-  const storedInfo = await chrome.storage.session.get(tabId);
-  let currentStorage = storedInfo[tabId];
-  if (!currentStorage) {
-    currentStorage = {
-      history: [],
-    };
-  }
-
   const sys = {
     role: "system",
     content: `You are an in-browser assistant helping a user interact with a web page. Here is the page content ${pageContent}`,
@@ -38,19 +31,16 @@ onReadyMessage(async (msg) => {
     content: userContent,
   };
 
-  currentStorage.history.push(query);
+  updateHistory(tabId, query);
   let ongoingReply = "";
   for await (const chunk of model.chat([sys, query])) {
     ongoingReply += chunk;
-    currentStorage.ongoingReply = ongoingReply;
-    storedInfo[tabId] = currentStorage;
-    chrome.storage.session.set(storedInfo);
+    await updateOngoing(tabId, ongoingReply);
   }
-  currentStorage.ongoingReply = null;
-  currentStorage.history.push({
+
+  await updateHistory(tabId, {
     role: "assistant",
     content: ongoingReply,
   });
-  storedInfo[tabId] = currentStorage;
-  chrome.storage.session.set(storedInfo);
+  await updateOngoing(tabId, null);
 });
