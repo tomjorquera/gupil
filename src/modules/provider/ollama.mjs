@@ -8,6 +8,54 @@ export class Ollama {
     this.system = system;
   }
 
+  static configuration = {
+    name: chrome.i18n.getMessage("ollamaConfigName"),
+    description: `By default, ollama restrict web origins. In order to enable the extension to use ollama, you need to set the <code>OLLAMA_ORIGINS</code> environment variable as follow:
+<pre>
+OLLAMA_ORGINS=${chrome.runtime.getURL("").slice(0, -1)}
+</pre>
+See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server">https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server</a> for how to configure environment variables with ollama.`,
+    options: [
+      {
+        id: "endpointurl",
+        label: chrome.i18n.getMessage("ollamaConfigEndpointLabel"),
+        description: chrome.i18n.getMessage("ollamaConfigEndpointDescr"),
+        default_value: "http://localhost:11434",
+        validate: (value) => {
+          try {
+            new URL(value);
+            return {
+              is_valid: true,
+            };
+          } catch (_) {
+            return {
+              is_valid: false,
+              msg: chrome.i18n.getMessage("ollamaConfigEndpointError"),
+            };
+          }
+
+        }
+      },
+      {
+        id: "model",
+        label: chrome.i18n.getMessage("ollamaConfigModelLabel"),
+        description: chrome.i18n.getMessage("ollamaConfigModelDescr"),
+        default_value: "openhermes:latest",
+        validate: (value) => {
+          if (value.split(":").length != 2) {
+            return {
+              is_valid: false,
+              msg: chrome.i18n.getMessage("ollamaConfigModelError"),
+            }
+          }
+          return {
+            is_valid: true,
+          };
+        }
+      },
+    ],
+  };
+
   async *complete(prompt, options = {}) {
     const response = await fetch(this.endpoint + Ollama.endpointComplete, {
       method: "POST",

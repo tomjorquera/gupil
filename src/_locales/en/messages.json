@@ -13,5 +13,29 @@
   },
   "cmdChat": {
     "message": "Chat"
+  },
+  "optionsSubmitBtn": {
+    "message": "Save"
+  },
+  "ollamaConfigName": {
+    "message": "ollama"
+  },
+  "ollamaConfigEndpointLabel": {
+    "message": "endpoint url"
+  },
+  "ollamaConfigEndpointDescr": {
+    "message": "URL of the ollama endpoint."
+  },
+  "ollamaConfigEndpointError": {
+    "message": "Value should be a valid URL!"
+  },
+  "ollamaConfigModelLabel": {
+    "message": "model"
+  },
+  "ollamaConfigModelDescr": {
+    "message": "Model name, in the <model>:<tag> format"
+  },
+  "ollamaConfigModelError": {
+    "message": "Value should be in the <model>:<tag> format"
   }
 }
