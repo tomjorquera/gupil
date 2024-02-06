@@ -1,5 +1,5 @@
 import { onReadyMessage } from "/modules/messaging.mjs";
-import { updateHistory, updateOngoing } from "/modules/state.mjs";
+import { getState, updateHistory, updateOngoing } from "/modules/state.mjs";
 import { Ollama } from "/modules/provider/ollama.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
@@ -31,9 +31,10 @@ onReadyMessage(async (msg) => {
     content: userContent,
   };
 
-  updateHistory(tabId, query);
+  await updateHistory(tabId, query);
+  const current_history = (await getState(tabId)).history;
   let ongoingReply = "";
-  for await (const chunk of model.chat([sys, query])) {
+  for await (const chunk of model.chat([sys, ...current_history])) {
     ongoingReply += chunk;
     await updateOngoing(tabId, ongoingReply);
   }
