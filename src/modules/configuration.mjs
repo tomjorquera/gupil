@@ -47,13 +47,16 @@ export const commonOptions = [
  */
 export function validateOptions(optionValues) {
   let valid = true;
-  for (const [option, input] of optionValues) {
+  for (const [option, input, warning] of optionValues) {
     const validation = option.validate(input.value);
     if (!validation.is_valid) {
       input.setCustomValidity(validation.msg);
       valid = false;
+      warning.style.visibility="visible";
+      warning.title = validation.msg;
     } else {
       input.setCustomValidity("");
+      warning.style.visibility="hidden";
     }
   }
 

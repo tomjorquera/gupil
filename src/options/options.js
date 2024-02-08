@@ -28,14 +28,19 @@ import("/modules/configuration.mjs").then(async (config) => {
       const input = option.htmlBuilder();
       input.value = configuratorSettings[option.id];
       input.setAttribute("title", option.description);
+      const warning = document.createElement("span");
+      warning.setAttribute("class", "config-err");
+      warning.innerHTML = "⚠";
+      warning.style.visibility = "hidden";
 
       const optionDiv = document.createElement("div");
       optionDiv.setAttribute("class", "config-entry");
       optionDiv.appendChild(label);
       optionDiv.appendChild(input);
+      optionDiv.appendChild(warning);
       fieldSet.appendChild(optionDiv);
 
-      configuratorOptionValues.push([option, input]);
+      configuratorOptionValues.push([option, input, warning]);
 
       form.appendChild(fieldSet);
     }
@@ -54,14 +59,19 @@ import("/modules/configuration.mjs").then(async (config) => {
       const input = option.htmlBuilder();
       input.value = commonSettings[option.id];
       input.setAttribute("title", option.description);
+      const warning = document.createElement("span");
+      warning.setAttribute("class", "config-err");
+      warning.innerHTML = "⚠";
+      warning.style.visibility = "hidden";
 
       const optionDiv = document.createElement("div");
       optionDiv.setAttribute("class", "config-entry");
       optionDiv.appendChild(label);
       optionDiv.appendChild(input);
+      optionDiv.appendChild(warning);
       commonFieldSet.appendChild(optionDiv);
 
-      commonOptionValues.push([option, input]);
+      commonOptionValues.push([option, input, warning]);
 
       form.appendChild(commonFieldSet);
     }

@@ -6,16 +6,18 @@ div.config-entry {
   display: table-row;
 }
 
-label, input {
+div.config-entry * {
   display: table-cell;
   margin-bottom: 10px;
-}
-
-label {
   padding-right: 10px;
+  margin-right: 10px;
 }
 
 fieldset {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+span.config-err {
+  color: red;
 }
