@@ -1,11 +1,9 @@
 export class Ollama {
-  static endpointComplete = "/api/generate";
   static endpointChat = "/api/chat";
 
-  constructor({endpoint, modelname, system = null}) {
+  constructor({endpoint, modelname}) {
     this.endpoint = endpoint;
     this.modelname = modelname;
-    this.system = system;
   }
 
   static configuration = {
@@ -56,27 +54,6 @@ See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-con
       },
     ],
   };
-
-  async *complete(prompt, options = {}) {
-    const response = await fetch(this.endpoint + Ollama.endpointComplete, {
-      method: "POST",
-      body: JSON.stringify({
-        model: this.modelname,
-        prompt,
-        options,
-        system: this.system,
-        stream: true,
-      }),
-    });
-
-    const decoder = new TextDecoder("utf-8");
-    for await (const chunk of response.body) {
-      const answer = JSON.parse(decoder.decode(chunk));
-      if (!answer.done) {
-        yield answer.response;
-      }
-    }
-  }
 
   async *chat(messages, options = {}) {
     const response = await fetch(this.endpoint + Ollama.endpointChat, {
