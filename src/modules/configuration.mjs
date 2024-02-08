@@ -35,6 +35,7 @@ export const commonOptions = [
     label: chrome.i18n.getMessage("commonOptionSysLabel"),
     description: chrome.i18n.getMessage("commonOptionSysDescr"),
     default_value: chrome.i18n.getMessage("commonOptionSysDefault"),
+    htmlBuilder: () => document.createElement("textarea") ,
     validate: (_) => { return { is_valid: true }; },
   }
 ]

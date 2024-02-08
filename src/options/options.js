@@ -25,7 +25,7 @@ import("/modules/configuration.mjs").then(async (config) => {
     for (const option of configurator.options) {
       const label = document.createElement("label");
       label.innerHTML = option.label;
-      const input = document.createElement("input");
+      const input = option.htmlBuilder();
       input.value = configuratorSettings[option.id];
       input.setAttribute("title", option.description);
 
@@ -51,7 +51,7 @@ import("/modules/configuration.mjs").then(async (config) => {
     for (const option of config.commonOptions) {
       const label = document.createElement("label");
       label.innerHTML = option.label;
-      const input = document.createElement("input");
+      const input = option.htmlBuilder();
       input.value = commonSettings[option.id];
       input.setAttribute("title", option.description);
 

@@ -20,6 +20,11 @@ See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-con
         label: chrome.i18n.getMessage("ollamaConfigEndpointLabel"),
         description: chrome.i18n.getMessage("ollamaConfigEndpointDescr"),
         default_value: "http://localhost:11434",
+        htmlBuilder: () => {
+          const res = document.createElement("input");
+          res.setAttribute("type", "url");
+          return res;
+        },
         validate: (value) => {
           try {
             new URL(value);
@@ -40,6 +45,7 @@ See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-con
         label: chrome.i18n.getMessage("ollamaConfigModelLabel"),
         description: chrome.i18n.getMessage("ollamaConfigModelDescr"),
         default_value: "openhermes:latest",
+        htmlBuilder: () => document.createElement("input") ,
         validate: (value) => {
           if (value.split(":").length != 2) {
             return {
