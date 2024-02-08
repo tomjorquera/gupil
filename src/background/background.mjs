@@ -1,6 +1,6 @@
 import { onReadyMessage } from "/modules/messaging.mjs";
 import { getState, updateHistory, updateOngoing } from "/modules/state.mjs";
-import { getConfiguredProvider } from "/modules/configuration.mjs";
+import { getCommonSettings, getConfiguredProvider, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
 ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
@@ -18,14 +18,15 @@ ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
 
 
 onReadyMessage(async (msg) => {
-
   const model = await getConfiguredProvider();
+  const settings = await getCommonSettings();
 
   const { tabId, userContent, pageContent } = msg;
+  const sys_prompt = settings[SYS_PROMPT].replace(SYS_PROMPT_PLACEHOLDER, pageContent)
 
   const sys = {
     role: "system",
-    content: `You are an in-browser assistant helping a user interact with a web page. Here is the page content ${pageContent}`,
+    content: sys_prompt,
   };
 
   const query = {
