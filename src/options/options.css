@@ -14,3 +14,8 @@ label, input {
 label {
   padding-right: 10px;
 }
+
+fieldset {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

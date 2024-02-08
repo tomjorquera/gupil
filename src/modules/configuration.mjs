@@ -4,6 +4,11 @@
 
 import { Ollama } from "/modules/provider/ollama.mjs"
 
+export const SYS_PROMPT = "systemprompt";
+export const SYS_PROMPT_PLACEHOLDER = "#PAGE_TEXT_CONTENT#";
+export const COMMON_SETTINGS = "_common_settings";
+const SELECTED_CONFIGURATION = "_selected_configuration";
+
 /**
  * Available configurators.
  */
@@ -20,11 +25,24 @@ for (const configurator of configurators) {
 }
 
 /**
- * Check the option values of a given form and validate it.
+ * Common options.
+ */
+export const commonOptions = [
+  {
+    id: SYS_PROMPT,
+    label: chrome.i18n.getMessage("commonOptionSysLabel"),
+    description: chrome.i18n.getMessage("commonOptionSysDescr"),
+    default_value: chrome.i18n.getMessage("commonOptionSysDefault"),
+    validate: (_) => { return { is_valid: true }; },
+  }
+]
+
+/**
+ * Check the option values and set inputs validity.
  *
  * Returns whether all the options are valid or not.
  */
-export function validateOptions(form, optionValues) {
+export function validateOptions(optionValues) {
   let valid = true;
   for (const [option, input] of optionValues) {
     const validation = option.validate(input.value);
@@ -36,46 +54,66 @@ export function validateOptions(form, optionValues) {
     }
   }
 
-  form.reportValidity();
   return valid;
 }
 
-/** Save the current options. */
-export async function saveOptions(selected_configurator, optionValues) {
-  let configuratorSettings = {}
+async function saveOptions(name, optionValues) {
+  let newSettings = {};
   for (const [option, input] of optionValues) {
-    configuratorSettings[option.id] = input.value
+    newSettings[option.id] = input.value;
   }
-  let settings = (await browser.storage.sync.get("settings"))["settings"];
-  if (!settings) {
-    settings = {};
-  }
+  await browser.storage.sync.set({ [name]: newSettings });
+}
+
+/** Save the selected configurator options. */
+export async function saveConfiguratorOptions(selected_configurator, optionValues) {
   const name = selected_configurator.name;
-  settings["selected_configurator"] = name;
-  settings[name] = configuratorSettings
-  browser.storage.sync.set({ settings });
+  await browser.storage.sync.set({ [SELECTED_CONFIGURATION]: name});
+  await saveOptions(name, optionValues);
 }
 
 
+/** Save common options. */
+export async function saveCommonOptions(optionValues) {
+  await saveOptions(COMMON_SETTINGS, optionValues);
+}
+
 /** Load saved options, or default values. */
-export async function loadOptions() {
-  let settings = (await browser.storage.sync.get("settings"))["settings"];
-  if (!settings) {
-    settings = {};
-    for (const configurator of configurators) {
-      let configSettings = {};
-      settings[configurator.name] = configSettings;
-      for (const option of configurator.options) {
-        configSettings[option.id] = option.default_value;
-      }
-    }
-  }
-  return settings;
+export async function loadOptions(name) {
+  return (await browser.storage.sync.get(name))[name];
 }
 
 /** Get the provided configured in the options. */
 export async function getConfiguredProvider() {
-  const options = await loadOptions();
-  const name = options["selected_configurator"];
-  return await builders[name](options[name]);
+  const name = (await browser.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  const options = (await browser.storage.sync.get(name))[name];
+  return await builders[name](options);
+}
+
+export async function getCommonSettings() {
+  return (await browser.storage.sync.get(COMMON_SETTINGS))[COMMON_SETTINGS];
+}
+
+/** Set settings to their default value. */
+async function setDefaultSettings() {
+  for (const configurator of configurators) {
+    let configSettings = {};
+    for (const option of configurator.options) {
+      configSettings[option.id] = option.default_value;
+    }
+    await browser.storage.sync.set({ [configurator.name] : configSettings})
+  }
+
+  let configSettings = {};
+  for (const option of commonOptions) {
+    configSettings[option.id] = option.default_value;
+  }
+  await browser.storage.sync.set({ [COMMON_SETTINGS] : configSettings})
+
+  await browser.storage.sync.set({ [SELECTED_CONFIGURATION] : configurators[0].name})
+}
+
+let settings = (await browser.storage.sync.get());
+if (Object.keys(settings).length == 0) {
+  await setDefaultSettings();
 }
