@@ -2,7 +2,7 @@ export class Ollama {
   static endpointComplete = "/api/generate";
   static endpointChat = "/api/chat";
 
-  constructor(endpoint, modelname, system = null) {
+  constructor({endpoint, modelname, system = null}) {
     this.endpoint = endpoint;
     this.modelname = modelname;
     this.system = system;
@@ -15,9 +15,10 @@ export class Ollama {
 OLLAMA_ORGINS=${chrome.runtime.getURL("").slice(0, -1)}
 </pre>
 See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server">https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server</a> for how to configure environment variables with ollama.`,
+    builder: async (options) => new Ollama(options),
     options: [
       {
-        id: "endpointurl",
+        id: "endpoint",
         label: chrome.i18n.getMessage("ollamaConfigEndpointLabel"),
         description: chrome.i18n.getMessage("ollamaConfigEndpointDescr"),
         default_value: "http://localhost:11434",
@@ -37,7 +38,7 @@ See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-con
         }
       },
       {
-        id: "model",
+        id: "modelname",
         label: chrome.i18n.getMessage("ollamaConfigModelLabel"),
         description: chrome.i18n.getMessage("ollamaConfigModelDescr"),
         default_value: "openhermes:latest",

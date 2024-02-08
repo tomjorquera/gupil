@@ -1,6 +1,6 @@
 import { onReadyMessage } from "/modules/messaging.mjs";
 import { getState, updateHistory, updateOngoing } from "/modules/state.mjs";
-import { Ollama } from "/modules/provider/ollama.mjs";
+import { getConfiguredProvider } from "/modules/configuration.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
 ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
@@ -16,9 +16,11 @@ ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
   }
 };
 
-const model = new Ollama("http://localhost:11434", "openhermes:latest");
 
 onReadyMessage(async (msg) => {
+
+  const model = await getConfiguredProvider();
+
   const { tabId, userContent, pageContent } = msg;
 
   const sys = {
