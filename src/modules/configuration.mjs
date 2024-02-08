@@ -8,6 +8,8 @@ export const SYS_PROMPT = "systemprompt";
 export const SYS_PROMPT_PLACEHOLDER = "#PAGE_TEXT_CONTENT#";
 export const COMMON_SETTINGS = "_common_settings";
 const SELECTED_CONFIGURATION = "_selected_configuration";
+const VERSION = "_version";
+const VERSION_NUMBER = 1;
 
 /**
  * Available configurators.
@@ -111,6 +113,8 @@ async function setDefaultSettings() {
   await browser.storage.sync.set({ [COMMON_SETTINGS] : configSettings})
 
   await browser.storage.sync.set({ [SELECTED_CONFIGURATION] : configurators[0].name})
+
+  await browser.storage.sync.set({ [VERSION] : VERSION_NUMBER})
 }
 
 let settings = (await browser.storage.sync.get());
