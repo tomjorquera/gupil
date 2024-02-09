@@ -18,10 +18,17 @@ ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
 
 
 onReadyMessage(async (msg) => {
+  const { tabId, userContent, pageContent } = msg;
+
   const model = await getConfiguredProvider();
+  if (!model) {
+    await updateError(tabId, {
+      message: "No provider configured! Please select a provider in the extension options.",
+    });
+    return;
+  }
   const settings = await getCommonSettings();
 
-  const { tabId, userContent, pageContent } = msg;
   try {
     const sys_prompt = settings[SYS_PROMPT].replace(SYS_PROMPT_PLACEHOLDER, pageContent)
 

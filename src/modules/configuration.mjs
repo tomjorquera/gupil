@@ -103,6 +103,9 @@ export async function loadOptions(name) {
 /** Get a new instance of the selected provider. */
 export async function getConfiguredProvider() {
   const name = (await browser.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  if (!name) {
+    return null;
+  }
   const options = (await browser.storage.sync.get(name))[name];
   return await configuratorsByName[name].builder(options);
 }
