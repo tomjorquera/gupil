@@ -82,5 +82,17 @@
   },
   "ollamaConfigModelError": {
     "message": "Value should be in the <model>:<tag> format"
+  },
+  "llamacppConfigName": {
+    "message": "llamacpp"
+  },
+  "llamacppConfigEndpointLabel": {
+    "message": "endpoint url"
+  },
+  "llamacppConfigEndpointDescr": {
+    "message": "URL of the Llama.cpp web endpoint."
+  },
+  "llamacppConfigEndpointError": {
+    "message": "Value should be a valid URL!"
   }
 }
