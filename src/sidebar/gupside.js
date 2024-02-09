@@ -30,7 +30,7 @@ Promise.all([
       if (currentState.ongoingReply) {
         appendMsg(contentBox, "assistant", currentState.ongoingReply);
       }
-      window.scrollTo(0, document.body.scrollHeight);
+      contentBox.scrollTop = contentBox.scrollHeight;
       currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
     }
   }

@@ -1,7 +1,18 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  height: 100vh;
+}
+
 #content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height:96vh;
+  overflow: scroll;
 }
 
 .msg {
@@ -29,15 +40,17 @@
   margin-bottom: 3%;
 }
 
+#container-input {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+
 #msg-form {
-  display: flex;
-  padding: 10px;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
 }
 
 #msg-form * {
   margin: 1%;
-}
-
-#msg-input {
-  flex: 1;
 }
