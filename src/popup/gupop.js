@@ -9,7 +9,6 @@ Promise.all([
       // only on Firefox
       chrome.sidebarAction.open();
     }
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     messaging.sendRequest(action);
   }
 
