@@ -17,7 +17,8 @@
     }
   },
 
-  "permissions": ["activeTab", "sidePanel", "storage"],
+  "permissions": ["sidePanel", "storage", "tabs"],
+  "optional_permissions": ["scripting"],
 
   "host_permissions": ["<all_urls>"],
 

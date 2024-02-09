@@ -2,16 +2,23 @@ Promise.all([
   import("/modules/messaging.mjs"),
   import("/modules/state.mjs"),
 ]).then(async (modules) => {
-  const [messaging, state] = modules;
-  const msgForm = document.getElementById("msg-form");
-  const msgInput = document.getElementById("msg-input");
-  msgForm.addEventListener("submit", (event) => {
-    event.preventDefault();
+
+  async function ensureContentScriptIsLoaded(tabId) {
+    await browser.scripting.executeScript({
+      files: ["/content_scripts/gupil.js"],
+      target: {
+        tabId,
+      },
+    });
+  }
+
+  async function sendRequest() {
+    const msgInput = document.getElementById("msg-input");
     const msgText = msgInput.value;
     if (!msgText) return;
     msgInput.value = "";
     messaging.sendRequest(msgText);
-  });
+  }
 
   async function update(currentState) {
     if (currentState) {
@@ -24,6 +31,7 @@ Promise.all([
         appendMsg(contentBox, "assistant", currentState.ongoingReply);
       }
       window.scrollTo(0, document.body.scrollHeight);
+      currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
     }
   }
 
@@ -45,6 +53,20 @@ Promise.all([
 
     container.appendChild(msg);
   }
+
+  const [messaging, state] = modules;
+  const msgForm = document.getElementById("msg-form");
+
+  let currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+
+  msgForm.addEventListener("click", async (event) => {
+    await chrome.permissions.request({
+      permissions: [ "scripting" ],
+      origins: [ currentTab.url ],
+    });
+    await ensureContentScriptIsLoaded(currentTab.id);
+    await sendRequest();
+  });
 
   state.listenToChanges(update);
 
