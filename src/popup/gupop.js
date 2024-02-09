@@ -9,7 +9,7 @@ Promise.all([
       // only on Firefox
       chrome.sidebarAction.open();
     }
-    messaging.sendRequest(action);
+    await messaging.sendRequest(action);
   }
 
   const chatBtn = document.getElementById("action-chat");

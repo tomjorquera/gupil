@@ -19,7 +19,7 @@ Promise.all([
     const msgText = msgInput.value;
     if (!msgText) return;
     msgInput.value = "";
-    messaging.sendRequest(msgText);
+    await messaging.sendRequest(msgText);
   }
 
   async function update(currentState) {

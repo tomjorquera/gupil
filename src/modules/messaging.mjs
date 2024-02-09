@@ -14,16 +14,22 @@
  * - the background script receives the message with `onReadyMessage`
  */
 
+
+import { updateError } from "/modules/state.mjs"
+
 /** Send a request for the current tab with user-provided content. */
-export function sendRequest(userContent) {
-  chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-    const tabId = tabs[0].id;
-    chrome.tabs.sendMessage(tabId, {
+export async function sendRequest(userContent) {
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tabId = tabs[0].id;
+  try {
+    await chrome.tabs.sendMessage(tabId, {
       tabId: tabId.toString(),
       type: "contentquery",
       userContent,
     });
-  });
+  } catch (err) {
+    await updateError(tabId.toString(), err);
+  }
 }
 
 /** Listen to incomplete requests for a tab and resend them with tab content.

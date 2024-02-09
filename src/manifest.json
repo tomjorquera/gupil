@@ -25,7 +25,10 @@
   "web_accessible_resources": [
     {
       "matches": ["<all_urls>"],
-      "resources": ["/modules/messaging.mjs"]
+      "resources": [
+        "/modules/messaging.mjs",
+        "/modules/state.mjs"
+      ]
     }
   ],
 
