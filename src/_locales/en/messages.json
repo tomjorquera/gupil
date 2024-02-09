@@ -2,15 +2,6 @@
   "extensionDescription": {
     "message": "AI capabilities in your browser."
   },
-  "cmdSummarize": {
-    "message": "Summarize"
-  },
-  "cmdELI5": {
-    "message": "ELI5"
-  },
-  "cmdTranslate": {
-    "message": "Translate"
-  },
   "cmdChat": {
     "message": "Chat"
   },
