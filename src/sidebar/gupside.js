@@ -54,20 +54,24 @@ Promise.all([
     container.appendChild(msg);
   }
 
-  const [messaging, state] = modules;
-  const msgForm = document.getElementById("msg-form");
-
-  let currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
-
-  msgForm.addEventListener("click", async (event) => {
+  async function submit() {
     await chrome.permissions.request({
       permissions: [ "scripting" ],
       origins: [ currentTab.url ],
     });
     await ensureContentScriptIsLoaded(currentTab.id);
     await sendRequest();
+  }
+
+  const [messaging, state] = modules;
+
+  const msgForm = document.getElementById("msg-form");
+  msgForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    submit();
   });
 
+  let currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
   state.listenToChanges(update);
 
   chrome.tabs.onActivated.addListener(
