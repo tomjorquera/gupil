@@ -8,6 +8,9 @@
   "optionsSubmitBtn": {
     "message": "Save"
   },
+  "optionsNoProviderSelected": {
+    "message": "-- Please select provider --"
+  },
   "commonOptionsLegend": {
     "message": "common options"
   },

@@ -2,6 +2,7 @@
  * This module handles configuration options
  */
 
+import { LlamaCPP } from "/modules/provider/llamacpp.mjs"
 import { Ollama } from "/modules/provider/ollama.mjs"
 
 export const SYS_PROMPT = "systemprompt";
@@ -17,14 +18,15 @@ const VERSION_NUMBER = 1;
  */
 export const configurators = [
   Ollama.configuration,
+  LlamaCPP.configuration,
 ];
 
 /**
- * Associated builder for each configurator.
+ * Configurators by name.
  */
-let builders = {};
+let configuratorsByName = {}
 for (const configurator of configurators) {
-  builders[configurator.name] = configurator.builder;
+  configuratorsByName[configurator.name] = configurator;
 }
 
 /**
@@ -75,7 +77,6 @@ async function saveOptions(name, optionValues) {
 /** Save the selected configurator options. */
 export async function saveConfiguratorOptions(selected_configurator, optionValues) {
   const name = selected_configurator.name;
-  await browser.storage.sync.set({ [SELECTED_CONFIGURATION]: name});
   await saveOptions(name, optionValues);
 }
 
@@ -99,39 +100,46 @@ export async function loadOptions(name) {
   return (await browser.storage.sync.get(name))[name];
 }
 
-/** Get the provided configured in the options. */
+/** Get a new instance of the selected provider. */
 export async function getConfiguredProvider() {
   const name = (await browser.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
   const options = (await browser.storage.sync.get(name))[name];
-  return await builders[name](options);
+  return await configuratorsByName[name].builder(options);
+}
+/**
+ * Set the selected configurator.
+ */
+export async function setSelectedConfigurator(name) {
+  await browser.storage.sync.set({ [SELECTED_CONFIGURATION]: name});
 }
 
+/** Get the provided configured name in the options. */
+export async function getSelectedConfigurator() {
+  const name = (await browser.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  return await configuratorsByName[name];
+}
+
+/** Get defined common settings. */
 export async function getCommonSettings() {
   return (await browser.storage.sync.get(COMMON_SETTINGS))[COMMON_SETTINGS];
 }
 
+/** Get defined quick actions. */
 export async function getQuickActions() {
   return (await browser.storage.sync.get(QUICK_ACTIONS))[QUICK_ACTIONS];
 }
 
-/** Set settings to their default value. */
-async function setDefaultSettings() {
-  for (const configurator of configurators) {
+/** Set entry settings to their default value. */
+async function setDefaultSettingsForEntry(name, options) {
     let configSettings = {};
-    for (const option of configurator.options) {
+    for (const option of options) {
       configSettings[option.id] = option.default_value;
     }
-    await browser.storage.sync.set({ [configurator.name] : configSettings})
-  }
+    await browser.storage.sync.set({ [name] : configSettings})
+}
 
-  let configSettings = {};
-  for (const option of commonOptions) {
-    configSettings[option.id] = option.default_value;
-  }
-  await browser.storage.sync.set({ [COMMON_SETTINGS] : configSettings})
-
-  await browser.storage.sync.set({ [SELECTED_CONFIGURATION] : configurators[0].name})
-
+/** Set default quick actions. */
+async function setDefaultQA() {
   await browser.storage.sync.set({ [QUICK_ACTIONS] : [
     [chrome.i18n.getMessage("quickActionDefaultAlias1"), chrome.i18n.getMessage("quickActionDefaultValue1")],
     [chrome.i18n.getMessage("quickActionDefaultAlias2"), chrome.i18n.getMessage("quickActionDefaultValue2")],
@@ -143,7 +151,20 @@ async function setDefaultSettings() {
   await browser.storage.sync.set({ [VERSION] : VERSION_NUMBER})
 }
 
-let settings = (await browser.storage.sync.get());
-if (Object.keys(settings).length == 0) {
-  await setDefaultSettings();
+// Ensure default values are set for everything
+for (const configurator of configurators) {
+  let settings = await loadOptions(configurator.name);
+  if (!settings) {
+    setDefaultSettingsForEntry(configurator.name, configurator.options)
+  }
+}
+
+let settings = await getCommonSettings();
+if (!settings) {
+  setDefaultSettingsForEntry(COMMON_SETTINGS, commonOptions)
+}
+
+let qa = await getQuickActions();
+if (!qa) {
+  setDefaultQA();
 }

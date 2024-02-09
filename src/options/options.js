@@ -1,21 +1,83 @@
 import("/modules/configuration.mjs").then(async (config) => {
+
   const providerConfig = document.getElementById("providerConfig");
 
-  const form = document.createElement("form");
-  form.setAttribute("class", "config");
+  const UNSELECTED = "_unselected";
 
-  const submit = document.createElement("button");
-  submit.setAttribute("type", "button");
-  submit.innerText = chrome.i18n.getMessage("optionsSubmitBtn");
+  await refresh();
 
-  for (const configurator of config.configurators) {
+  async function refresh() {
+    const form = document.createElement("form");
+    form.setAttribute("class", "config");
+
+    const configurator = await config.getSelectedConfigurator();
+
+    const selectProvider = document.createElement("select");
+    if (!configurator) {
+      selectProvider.appendChild(new Option(chrome.i18n.getMessage("optionsNoProviderSelected"), UNSELECTED));
+    }
+    for (const configurator of config.configurators) {
+      selectProvider.appendChild(new Option(configurator.name));
+    }
+    if (configurator) {
+      selectProvider.value = configurator.name;
+    }
+    form.appendChild(selectProvider);
+
+    selectProvider.addEventListener("change", async () => {
+      const selectedProvider = selectProvider.value
+      if (selectedProvider == UNSELECTED) {
+        return;
+      }
+      await config.setSelectedConfigurator(selectedProvider);
+      refresh();
+    });
+
+    if (configurator) {
+      const submit = document.createElement("button");
+      submit.setAttribute("type", "submit");
+      submit.innerText = chrome.i18n.getMessage("optionsSubmitBtn");
+
+      const configuratorOptionValues = await addSectionForConfigurator(form);
+      const commonOptionValues = await addSectionForCommonSettings(form);
+      const qaValues = await addSectionForQA(form);
+
+      form.appendChild(submit);
+
+      form.addEventListener("change", (e) => {
+        e.preventDefault();
+        let valid = config.validateOptions(configuratorOptionValues);
+        valid = valid && config.validateOptions(commonOptionValues);
+        submit.disabled = !valid;
+        form.reportValidity();
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        let valid = config.validateOptions(configuratorOptionValues);
+        valid = valid && config.validateOptions(commonOptionValues);
+        form.reportValidity();
+        if (valid) {
+          await config.saveConfiguratorOptions(await config.getSelectedConfigurator(), configuratorOptionValues);
+          await config.saveCommonOptions(commonOptionValues);
+          await config.saveQuickActions(qaValues);
+          refresh();
+        }
+      });
+    }
+    providerConfig.innerHTML= "";
+    providerConfig.appendChild(form);
+  }
+
+  async function addSectionForConfigurator(form) {
+    const configurator = await config.getSelectedConfigurator();
+
     const configuratorSettings = await config.loadOptions(configurator.name);
+    let configuratorOptionValues = []
 
     const configDiv = document.createElement("div");
     configDiv.innerHTML = configurator.description;
     form.appendChild(configDiv);
-
-    let configuratorOptionValues = []
 
     const fieldSet = document.createElement("fieldset");
     const legend = document.createElement("legend");
@@ -42,9 +104,12 @@ import("/modules/configuration.mjs").then(async (config) => {
       fieldSet.appendChild(optionDiv);
 
       configuratorOptionValues.push([option, input, warning]);
-
     }
+    return configuratorOptionValues;
+  }
 
+  async function addSectionForCommonSettings(form) {
+    const commonSettings = await config.loadOptions(config.COMMON_SETTINGS);
     let commonOptionValues = []
 
     const commonFieldSet = document.createElement("fieldset");
@@ -53,7 +118,6 @@ import("/modules/configuration.mjs").then(async (config) => {
     commonFieldSet.append(commonLegend);
     form.appendChild(commonFieldSet);
 
-    const commonSettings = await config.loadOptions(config.COMMON_SETTINGS);
     for (const option of config.commonOptions) {
       const label = document.createElement("label");
       label.innerHTML = option.label;
@@ -74,7 +138,11 @@ import("/modules/configuration.mjs").then(async (config) => {
 
       commonOptionValues.push([option, input, warning]);
     }
+    return commonOptionValues;
+  }
 
+  async function addSectionForQA(form) {
+    const qaSettings = await config.loadOptions(config.QUICK_ACTIONS);
     let qaValues = []
 
     const qaFieldSet = document.createElement("fieldset");
@@ -83,7 +151,6 @@ import("/modules/configuration.mjs").then(async (config) => {
     qaFieldSet.append(qaLegend);
     form.appendChild(qaFieldSet);
 
-    const qaSettings = await config.loadOptions(config.QUICK_ACTIONS);
     let i = 0;
     for (const [qaAlias, qaValue] of qaSettings){
       i += 1;
@@ -105,26 +172,7 @@ import("/modules/configuration.mjs").then(async (config) => {
 
       qaValues.push([inputAlias, inputValue]);
     }
-
-    form.addEventListener("change", () => {
-      let valid = config.validateOptions(configuratorOptionValues);
-      valid = valid && config.validateOptions(commonOptionValues);
-      submit.disabled = !valid;
-      form.reportValidity();
-    });
-
-    form.addEventListener("click", async () => {
-      let valid = config.validateOptions(configuratorOptionValues);
-      valid = valid && config.validateOptions(commonOptionValues);
-      form.reportValidity();
-      if (valid) {
-        await config.saveConfiguratorOptions(configurator, configuratorOptionValues);
-        await config.saveCommonOptions(commonOptionValues);
-        await config.saveQuickActions(qaValues);
-      }
-    });
+    return qaValues
   }
-  form.appendChild(submit);
-  providerConfig.appendChild(form);
 
 })

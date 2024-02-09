@@ -1,5 +1,6 @@
 form.config {
   display: table;
+  min-height: 200px;
 }
 
 div.config-entry {
