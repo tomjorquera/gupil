@@ -1,4 +1,9 @@
-import("/modules/messaging.mjs").then((messaging) => {
+Promise.all([
+  import("/modules/messaging.mjs"),
+  import("/modules/configuration.mjs"),
+]).then(async (modules) => {
+  const [messaging, config] = modules;
+
   async function call_to_action(action) {
     if ("sidebarAction" in chrome) {
       // only on Firefox
@@ -11,34 +16,17 @@ import("/modules/messaging.mjs").then((messaging) => {
   const chatBtn = document.getElementById("action-chat");
   chatBtn.onclick = () => chrome.sidebarAction.open();
 
-  const availableActions = [
-    {
-      id: "summarize",
-      title: chrome.i18n.getMessage("cmdSummarize"),
-      action: () => call_to_action("Please summarize the page content."),
-    },
-    {
-      id: "eli5",
-      title: chrome.i18n.getMessage("cmdELI5"),
-      action: () =>
-        call_to_action("Please describe the page content in simple terms."),
-    },
-    {
-      id: "translate",
-      title: chrome.i18n.getMessage("cmdTranslate"),
-      action: () =>
-        call_to_action("Please translate the page content in english."),
-    },
-  ];
-
+  const availableActions = await config.getQuickActions();
   if (availableActions?.length) {
     const content = document.getElementById("popup-content");
     content.appendChild(document.createElement("hr"));
-    for (const { id, title, action } of availableActions) {
+    for (const [ alias, value ] of availableActions) {
+      if (alias == "" || value == "") {
+        continue;
+      }
       const actionButton = document.createElement("button");
-      actionButton.innerText = title;
-      actionButton.setAttribute("id", `action-{id}`);
-      actionButton.onclick = action;
+      actionButton.innerText = alias;
+      actionButton.onclick = () => call_to_action(value)
       content.appendChild(actionButton);
     }
   }

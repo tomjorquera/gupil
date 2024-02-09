@@ -110,6 +110,10 @@ export async function getCommonSettings() {
   return (await browser.storage.sync.get(COMMON_SETTINGS))[COMMON_SETTINGS];
 }
 
+export async function getQuickActions() {
+  return (await browser.storage.sync.get(QUICK_ACTIONS))[QUICK_ACTIONS];
+}
+
 /** Set settings to their default value. */
 async function setDefaultSettings() {
   for (const configurator of configurators) {
