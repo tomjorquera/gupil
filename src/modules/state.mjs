@@ -56,6 +56,7 @@ export function listenToChanges(callback) {
  */
 export async function updateHistory(tabId, newMsg) {
   const currentState = await getState(tabId);
+  currentState.error = null;
   currentState.history.push(newMsg);
   await updateState(tabId, currentState);
 }
@@ -65,6 +66,17 @@ export async function updateHistory(tabId, newMsg) {
  */
 export async function updateOngoing(tabId, ongoingReply) {
   const currentState = await getState(tabId);
+  currentState.error = null;
   currentState.ongoingReply = ongoingReply;
+  await updateState(tabId, currentState);
+}
+
+/**
+ * Set error status for the given tab
+ */
+export async function updateError(tabId, error) {
+  const currentState = await getState(tabId);
+  currentState.error = error;
+  currentState.history = [];
   await updateState(tabId, currentState);
 }

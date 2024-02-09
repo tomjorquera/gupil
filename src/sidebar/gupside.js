@@ -3,6 +3,8 @@ Promise.all([
   import("/modules/state.mjs"),
 ]).then(async (modules) => {
 
+  const [messaging, state] = modules;
+
   async function ensureContentScriptIsLoaded(tabId) {
     await browser.scripting.executeScript({
       files: ["/content_scripts/gupil.js"],
@@ -24,6 +26,10 @@ Promise.all([
     if (currentState) {
       const contentBox = document.querySelector("#content");
       contentBox.textContent = "";
+      if (currentState.error) {
+        displayErr(currentState.error);
+        return;
+      }
       for (entry of currentState.history) {
         appendMsg(contentBox, entry.role, entry.content);
       }
@@ -36,7 +42,7 @@ Promise.all([
   }
 
   function appendMsg(container, role, content) {
-    const displayName = role == "user" ? "You" : "Gupil";
+    const displayName = role == "user" ? "You" : role == "assistant" ? "Gupil" : "Error";
     const msg = document.createElement("div");
     msg.setAttribute("class", `msg msg-${role}`);
 
@@ -54,6 +60,12 @@ Promise.all([
     container.appendChild(msg);
   }
 
+  async function displayErr(err) {
+    const contentBox = document.querySelector("#content");
+    contentBox.textContent = "";
+    appendMsg(contentBox, "error", err.message);
+  }
+
   async function submit() {
     await chrome.permissions.request({
       permissions: [ "scripting" ],
@@ -62,8 +74,6 @@ Promise.all([
     await ensureContentScriptIsLoaded(currentTab.id);
     await sendRequest();
   }
-
-  const [messaging, state] = modules;
 
   const msgForm = document.getElementById("msg-form");
   msgForm.addEventListener("submit", (e) => {

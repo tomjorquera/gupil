@@ -34,6 +34,13 @@ body {
   color: #ffffff;
   align-self: flex-end;
 }
+.msg-error {
+  background: red;
+  color: #ffffff;
+  align-self: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
 
 .msg-role {
   font-weight: bold;
