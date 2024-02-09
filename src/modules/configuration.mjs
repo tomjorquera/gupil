@@ -7,6 +7,7 @@ import { Ollama } from "/modules/provider/ollama.mjs"
 export const SYS_PROMPT = "systemprompt";
 export const SYS_PROMPT_PLACEHOLDER = "#PAGE_TEXT_CONTENT#";
 export const COMMON_SETTINGS = "_common_settings";
+export const QUICK_ACTIONS = "_quickaction";
 const SELECTED_CONFIGURATION = "_selected_configuration";
 const VERSION = "_version";
 const VERSION_NUMBER = 1;
@@ -37,8 +38,8 @@ export const commonOptions = [
     default_value: chrome.i18n.getMessage("commonOptionSysDefault"),
     htmlBuilder: () => document.createElement("textarea") ,
     validate: (_) => { return { is_valid: true }; },
-  }
-]
+  },
+];
 
 /**
  * Check the option values and set inputs validity.
@@ -84,6 +85,15 @@ export async function saveCommonOptions(optionValues) {
   await saveOptions(COMMON_SETTINGS, optionValues);
 }
 
+/** Save quick actions. */
+export async function saveQuickActions(optionValues) {
+  let newSettings = []
+  for (const [alias, value] of optionValues) {
+    newSettings.push([alias.value, value.value]);
+  }
+  await browser.storage.sync.set({ [QUICK_ACTIONS]: newSettings });
+}
+
 /** Load saved options, or default values. */
 export async function loadOptions(name) {
   return (await browser.storage.sync.get(name))[name];
@@ -117,6 +127,14 @@ async function setDefaultSettings() {
   await browser.storage.sync.set({ [COMMON_SETTINGS] : configSettings})
 
   await browser.storage.sync.set({ [SELECTED_CONFIGURATION] : configurators[0].name})
+
+  await browser.storage.sync.set({ [QUICK_ACTIONS] : [
+    [chrome.i18n.getMessage("quickActionDefaultAlias1"), chrome.i18n.getMessage("quickActionDefaultValue1")],
+    [chrome.i18n.getMessage("quickActionDefaultAlias2"), chrome.i18n.getMessage("quickActionDefaultValue2")],
+    [chrome.i18n.getMessage("quickActionDefaultAlias3"), chrome.i18n.getMessage("quickActionDefaultValue3")],
+    [chrome.i18n.getMessage("quickActionDefaultAlias4"), chrome.i18n.getMessage("quickActionDefaultValue4")],
+    [chrome.i18n.getMessage("quickActionDefaultAlias5"), chrome.i18n.getMessage("quickActionDefaultValue5")],
+  ]})
 
   await browser.storage.sync.set({ [VERSION] : VERSION_NUMBER})
 }

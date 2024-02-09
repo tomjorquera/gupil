@@ -21,6 +21,7 @@ import("/modules/configuration.mjs").then(async (config) => {
     const legend = document.createElement("legend");
     legend.innerHTML = configurator.name;
     fieldSet.append(legend);
+    form.appendChild(fieldSet);
 
     for (const option of configurator.options) {
       const label = document.createElement("label");
@@ -42,7 +43,6 @@ import("/modules/configuration.mjs").then(async (config) => {
 
       configuratorOptionValues.push([option, input, warning]);
 
-      form.appendChild(fieldSet);
     }
 
     let commonOptionValues = []
@@ -51,6 +51,7 @@ import("/modules/configuration.mjs").then(async (config) => {
     const commonLegend = document.createElement("legend");
     commonLegend.innerHTML = chrome.i18n.getMessage("commonOptionsLegend");
     commonFieldSet.append(commonLegend);
+    form.appendChild(commonFieldSet);
 
     const commonSettings = await config.loadOptions(config.COMMON_SETTINGS);
     for (const option of config.commonOptions) {
@@ -72,8 +73,37 @@ import("/modules/configuration.mjs").then(async (config) => {
       commonFieldSet.appendChild(optionDiv);
 
       commonOptionValues.push([option, input, warning]);
+    }
 
-      form.appendChild(commonFieldSet);
+    let qaValues = []
+
+    const qaFieldSet = document.createElement("fieldset");
+    const qaLegend = document.createElement("legend");
+    qaLegend.innerHTML = chrome.i18n.getMessage("quickActionsLegend");
+    qaFieldSet.append(qaLegend);
+    form.appendChild(qaFieldSet);
+
+    const qaSettings = await config.loadOptions(config.QUICK_ACTIONS);
+    let i = 0;
+    for (const [qaAlias, qaValue] of qaSettings){
+      i += 1;
+      const label = document.createElement("label");
+      label.innerHTML = chrome.i18n.getMessage("quickActionLabel") + " " + i;
+      const inputAlias = document.createElement("input");
+      inputAlias.value = qaAlias;
+      inputAlias.setAttribute("title", chrome.i18n.getMessage("quickActionDescrAlias"));
+      const inputValue = document.createElement("textArea");
+      inputValue.value = qaValue;
+      inputValue.setAttribute("title", chrome.i18n.getMessage("quickActionDescrValue"));
+
+      const optionDiv = document.createElement("div");
+      optionDiv.setAttribute("class", "config-entry");
+      optionDiv.appendChild(label);
+      optionDiv.appendChild(inputAlias);
+      optionDiv.appendChild(inputValue);
+      qaFieldSet.appendChild(optionDiv);
+
+      qaValues.push([inputAlias, inputValue]);
     }
 
     form.addEventListener("change", () => {
@@ -90,6 +120,7 @@ import("/modules/configuration.mjs").then(async (config) => {
       if (valid) {
         await config.saveConfiguratorOptions(configurator, configuratorOptionValues);
         await config.saveCommonOptions(commonOptionValues);
+        await config.saveQuickActions(qaValues);
       }
     });
   }

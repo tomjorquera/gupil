@@ -29,6 +29,48 @@
   "commonOptionSysDefault": {
     "message": "You are an in-browser assistant helping a user interact with a web page. Here is the page content #PAGE_TEXT_CONTENT#"
   },
+  "QuickActionsLegend": {
+    "message": "quick actions"
+  },
+  "QuickActionLabel": {
+    "message": "quick action"
+  },
+  "QuickActionDescrAlias": {
+    "message": "Customizable quick action alias."
+  },
+  "QuickActionDescrValue": {
+    "message": "Customizable quick action value."
+  },
+  "QuickActionDefaultAlias1": {
+    "message": "summarize"
+  },
+  "QuickActionDefaultValue1": {
+    "message": "Please summarize the page content."
+  },
+  "QuickActionDefaultAlias2": {
+    "message": "eli5"
+  },
+  "QuickActionDefaultValue2": {
+    "message": "Please describe the page content in simple terms."
+  },
+  "QuickActionDefaultAlias3": {
+    "message": "translate"
+  },
+  "QuickActionDefaultValue3": {
+    "message": "Please translate the page content in english."
+  },
+  "QuickActionDefaultAlias4": {
+    "message": ""
+  },
+  "QuickActionDefaultValue4": {
+    "message": ""
+  },
+  "QuickActionDefaultAlias5": {
+    "message": ""
+  },
+  "QuickActionDefaultValue5": {
+    "message": ""
+  },
   "ollamaConfigName": {
     "message": "ollama"
   },
