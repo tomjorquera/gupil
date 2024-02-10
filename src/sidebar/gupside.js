@@ -6,7 +6,7 @@ Promise.all([
   const [messaging, state] = modules;
 
   async function ensureContentScriptIsLoaded(tabId) {
-    await browser.scripting.executeScript({
+    await chrome.scripting.executeScript({
       files: ["/content_scripts/gupil.js"],
       target: {
         tabId,
