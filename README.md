@@ -15,6 +15,6 @@ This extension aims at giving full control to the user, including by supporting 
   - [ ] OpenAI and OpenAI-compatible APIs
 - [X] Configurable quick actions
 - [ ] Complete i18n with at least english and french
-- [ ] Visual indicator when waiting for model
-- [ ] Visual indicator when model error
+- [X] Visual indicator when waiting for model
+- [X] Visual indicator when model error
 - [ ] Replace placeholder icon
