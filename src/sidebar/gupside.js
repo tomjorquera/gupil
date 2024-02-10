@@ -14,14 +14,6 @@ Promise.all([
     });
   }
 
-  async function sendRequest() {
-    const msgInput = document.getElementById("msg-input");
-    const msgText = msgInput.value;
-    if (!msgText) return;
-    msgInput.value = "";
-    await messaging.sendRequest(msgText);
-  }
-
   async function update(currentState) {
     if (currentState) {
       const contentBox = document.querySelector("#content");
@@ -90,19 +82,24 @@ Promise.all([
     appendMsg(contentBox, "error", err.message);
   }
 
-  async function submit() {
+  async function submit(msg) {
     await chrome.permissions.request({
       permissions: [ "scripting" ],
       origins: [ currentTab.url ],
     });
     await ensureContentScriptIsLoaded(currentTab.id);
-    await sendRequest();
+    await messaging.sendRequest(msg);
   }
 
   const msgForm = document.getElementById("msg-form");
   msgForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    submit();
+
+    const msgInput = document.getElementById("msg-input");
+    const msgText = msgInput.value;
+    if (!msgText) return;
+    msgInput.value = "";
+    submit(msgText);
   });
 
   let currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
