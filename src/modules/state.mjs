@@ -26,6 +26,9 @@ export async function getState(tabId) {
   if (!currentState) {
     currentState = {
       history: [],
+      error: null,
+      waiting: false,
+      ongoingReply: null,
     };
   }
   return currentState;
@@ -67,7 +70,15 @@ export async function updateHistory(tabId, newMsg) {
 export async function updateOngoing(tabId, ongoingReply) {
   const currentState = await getState(tabId);
   currentState.error = null;
+  currentState.waiting = false;
   currentState.ongoingReply = ongoingReply;
+  await updateState(tabId, currentState);
+}
+
+export async function isWaiting(tabId) {
+  const currentState = await getState(tabId);
+  currentState.error = null;
+  currentState.waiting = true;
   await updateState(tabId, currentState);
 }
 
@@ -77,6 +88,7 @@ export async function updateOngoing(tabId, ongoingReply) {
 export async function updateError(tabId, error) {
   const currentState = await getState(tabId);
   currentState.error = error;
+  currentState.waiting = false;
   currentState.history = [];
   await updateState(tabId, currentState);
 }

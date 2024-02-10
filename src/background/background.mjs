@@ -1,5 +1,5 @@
 import { onReadyMessage } from "/modules/messaging.mjs";
-import { getState, updateError, updateHistory, updateOngoing } from "/modules/state.mjs";
+import { getState, isWaiting, updateError, updateHistory, updateOngoing } from "/modules/state.mjs";
 import { getCommonSettings, getConfiguredProvider, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
@@ -43,6 +43,7 @@ onReadyMessage(async (msg) => {
     };
 
     await updateHistory(tabId, query);
+    await isWaiting(tabId);
     const current_history = (await getState(tabId)).history;
     let ongoingReply = "";
     for await (const chunk of model.chat([sys, ...current_history])) {

@@ -36,6 +36,9 @@ Promise.all([
       if (currentState.ongoingReply) {
         appendMsg(contentBox, "assistant", currentState.ongoingReply);
       }
+      if (currentState.waiting) {
+        appendIsTyping(contentBox);
+      }
       contentBox.scrollTop = contentBox.scrollHeight;
       currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
     }
@@ -53,6 +56,27 @@ Promise.all([
     const contentNode = document.createElement("div");
     contentNode.appendChild(document.createTextNode(content));
     contentNode.setAttribute("class", "msg-content");
+
+    msg.appendChild(roleNode);
+    msg.appendChild(contentNode);
+
+    container.appendChild(msg);
+  }
+
+  function appendIsTyping(container) {
+    const displayName = "Gupil";
+    const msg = document.createElement("div");
+    msg.setAttribute("class", `msg msg-assistant`);
+
+    const roleNode = document.createElement("div");
+    roleNode.appendChild(document.createTextNode(displayName));
+    roleNode.setAttribute("class", "msg-role");
+
+    const contentNode = document.createElement("div");
+    contentNode.setAttribute("class", "msg-typing");
+    contentNode.appendChild(document.createElement("div"));
+    contentNode.appendChild(document.createElement("div"));
+    contentNode.appendChild(document.createElement("div"));
 
     msg.appendChild(roleNode);
     msg.appendChild(contentNode);
