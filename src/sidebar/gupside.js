@@ -111,4 +111,6 @@ Promise.all([
   chrome.tabs.onUpdated.addListener(
     async () => await state.currentTabState().then(update),
   );
+
+  await state.currentTabState().then(update);
 });
