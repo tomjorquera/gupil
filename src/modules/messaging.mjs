@@ -51,7 +51,11 @@ export function listenToPageContentRequests() {
       ...request,
       pageContent: document.getRootNode().body.innerText,
     };
-    chrome.runtime.sendMessage(query);
+    try {
+      chrome.runtime.sendMessage(query);
+    } catch (err) {
+      updateError(tabId.toString(), err);
+    }
     return true;
   });
 }
