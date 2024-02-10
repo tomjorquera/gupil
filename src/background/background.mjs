@@ -57,5 +57,6 @@ onReadyMessage(async (msg) => {
     await updateOngoing(tabId, null);
   } catch (err) {
     await updateError(tabId, err);
+    throw err;
   }
 });

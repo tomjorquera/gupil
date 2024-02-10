@@ -29,6 +29,7 @@ export async function sendRequest(userContent) {
     });
   } catch (err) {
     await updateError(tabId.toString(), err);
+    throw err;
   }
 }
 
@@ -55,6 +56,7 @@ export function listenToPageContentRequests() {
       chrome.runtime.sendMessage(query);
     } catch (err) {
       updateError(tabId.toString(), err);
+      throw err;
     }
     return true;
   });
