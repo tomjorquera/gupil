@@ -25,7 +25,7 @@ Promise.all([
       }
       const actionButton = document.createElement("button");
       actionButton.innerText = alias;
-      actionButton.onclick = () => call_to_action(value)
+      actionButton.onclick = () => call_to_action(value);
       content.appendChild(actionButton);
     }
   }

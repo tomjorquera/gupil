@@ -46,7 +46,7 @@ export function listenToPageContentRequests() {
         !("pageContent" in request)
       )
     ) {
-      return true;
+      return false;
     }
     const query = {
       ...request,
@@ -58,7 +58,8 @@ export function listenToPageContentRequests() {
       updateError(tabId.toString(), err);
       throw err;
     }
-    return true;
+    sendResponse();
+    return Promise.resolve();
   });
 }
 
@@ -72,8 +73,9 @@ export function onReadyMessage(callback) {
         "pageContent" in request
       )
     ) {
-      return;
+      return false;
     }
     callback(request);
+    return Promise.resolve();
   });
 }
