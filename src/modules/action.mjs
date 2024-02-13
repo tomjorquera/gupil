@@ -24,18 +24,11 @@ export async function ensureContentScriptIsLoaded(tabId) {
 }
 
 /** open the sidebar using the browser specific method. */
-export function openSidebar() {
+export function openSidebar(tabId) {
   if ("sidebarAction" in chrome) {
     // on Firefox
     chrome.sidebarAction.open();
   } else {
-    // on Chrome
-    chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    }).then((tabs) => {
-      const tabId = tabs[0].id;
-      chrome.sidePanel.open({ tabId });
-    });
+    chrome.sidePanel.open({ tabId });
   }
 }
