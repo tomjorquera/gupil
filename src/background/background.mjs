@@ -1,6 +1,8 @@
-import { onReadyMessage } from "/modules/messaging.mjs";
+import { onReadyMessage, sendRequest } from "/modules/messaging.mjs";
 import { getState, isWaiting, updateError, updateHistory, updateOngoing } from "/modules/state.mjs";
-import { getCommonSettings, getConfiguredProvider, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
+import { getCommonSettings, getConfiguredProvider, getQuickActions, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
+
+import { ensureContentScriptIsLoaded, openSidebar } from "/modules/action.mjs";
 
 // Polyfill for chrome https://bugs.chromium.org/p/chromium/issues/detail?id=929585
 ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
@@ -16,6 +18,48 @@ ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
   }
 };
 
+/** create custom chat menu with quick actions. */
+async function gupilChatMenu() {
+  let associatedActions = {};
+  chrome.contextMenus.create({
+    id: "cmd-chat",
+    contexts: ["action"],
+    title: chrome.i18n.getMessage("cmdChat"),
+  });
+
+  const availableActions = await getQuickActions();
+  if (availableActions?.length) {
+    chrome.contextMenus.create({
+      id: "qa",
+      contexts: ["action", "page"],
+      title: chrome.i18n.getMessage("QuickActionsLegend"),
+    });
+
+    for (const [alias, selectedAction] of availableActions) {
+      if (alias == "" || selectedAction == "") {
+        continue;
+      }
+      chrome.contextMenus.create({
+        id: `qa-${alias}`,
+        contexts: ["action", "page"],
+        title: alias,
+        parentId: "qa",
+      });
+      associatedActions[`qa-${alias}`] = selectedAction;
+    }
+  }
+
+  chrome.contextMenus.onClicked.addListener((info, tab) => {
+    openSidebar(tab.id);
+    //chrome.sidePanel.open({ tab.id });
+    ensureContentScriptIsLoaded(tab.id).then(() => {
+      if (Object.hasOwn(associatedActions, info.menuItemId)) {
+        sendRequest(associatedActions[info.menuItemId]);
+      }
+    });
+  });
+}
+gupilChatMenu();
 
 onReadyMessage(async (msg) => {
   const { tabId, userContent, pageContent } = msg;
