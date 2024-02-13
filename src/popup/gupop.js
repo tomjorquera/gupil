@@ -1,36 +1,12 @@
-async function ensureContentScriptIsLoaded(tabId) {
-  await chrome.scripting.executeScript({
-    files: ["/content_scripts/gupil.js"],
-    target: {
-      tabId,
-    },
-  });
-}
-
-function openSidebar() {
-  if ("sidebarAction" in chrome) {
-    // on Firefox
-    chrome.sidebarAction.open();
-  } else {
-    // on Chrome
-    chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    }).then((tabs) => {
-      const tabId = tabs[0].id;
-      chrome.sidePanel.open({ tabId });
-    });
-  }
-}
-
 Promise.all([
+  import("/modules/action.mjs"),
   import("/modules/messaging.mjs"),
   import("/modules/configuration.mjs"),
 ]).then(async (modules) => {
-  const [messaging, config] = modules;
+  const [action, messaging, config] = modules;
 
   const chatBtn = document.getElementById("action-chat");
-  chatBtn.onclick = openSidebar;
+  chatBtn.onclick = action.openSidebar;
 
   const availableActions = await config.getQuickActions();
   if (availableActions?.length) {
@@ -38,21 +14,21 @@ Promise.all([
     console.log(currentTab.url);
     const content = document.getElementById("popup-content");
     content.appendChild(document.createElement("hr"));
-    for (const [ alias, action ] of availableActions) {
-      if (alias == "" || action == "") {
+    for (const [ alias, selectedAction ] of availableActions) {
+      if (alias == "" || selectedAction == "") {
         continue;
       }
       const actionButton = document.createElement("button");
       actionButton.innerText = alias;
       actionButton.onclick = async (e) => {
         e.preventDefault();
-        openSidebar();
+        action.openSidebar();
         await chrome.permissions.request({
           permissions: [ "scripting" ],
           origins: [ currentTab.url ],
         });
-        await ensureContentScriptIsLoaded(currentTab.id);
-        await messaging.sendRequest(action);
+        await action.ensureContentScriptIsLoaded(currentTab.id);
+        await messaging.sendRequest(selectedAction);
 
       };
       content.appendChild(actionButton);

@@ -1,18 +1,10 @@
 Promise.all([
+  import("/modules/action.mjs"),
   import("/modules/messaging.mjs"),
   import("/modules/state.mjs"),
 ]).then(async (modules) => {
 
-  const [messaging, state] = modules;
-
-  async function ensureContentScriptIsLoaded(tabId) {
-    await chrome.scripting.executeScript({
-      files: ["/content_scripts/gupil.js"],
-      target: {
-        tabId,
-      },
-    });
-  }
+  const [action, messaging, state] = modules;
 
   async function update(currentState) {
     if (currentState) {
@@ -87,7 +79,7 @@ Promise.all([
       permissions: [ "scripting" ],
       origins: [ currentTab.url ],
     });
-    await ensureContentScriptIsLoaded(currentTab.id);
+    await action.ensureContentScriptIsLoaded(currentTab.id);
     await messaging.sendRequest(msg);
   }
 
