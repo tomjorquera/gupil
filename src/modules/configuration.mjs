@@ -4,6 +4,7 @@
 
 import { LlamaCPP } from "/modules/provider/llamacpp.mjs"
 import { Ollama } from "/modules/provider/ollama.mjs"
+import { OpenAI } from "/modules/provider/openai.mjs"
 
 export const SYS_PROMPT = "systemprompt";
 export const SYS_PROMPT_PLACEHOLDER = "#PAGE_TEXT_CONTENT#";
@@ -19,6 +20,7 @@ const VERSION_NUMBER = 1;
 export const configurators = [
   Ollama.configuration,
   LlamaCPP.configuration,
+  OpenAI.configuration,
 ];
 
 /**

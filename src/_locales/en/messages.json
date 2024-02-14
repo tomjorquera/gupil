@@ -97,5 +97,35 @@
   },
   "llamacppConfigEndpointError": {
     "message": "Value should be a valid URL!"
+  },
+  "openaiConfigName": {
+    "message": "openai"
+  },
+  "openaiConfigDescr": {
+    "message": "Can also be used for OpenAI-compatible API endpoints, by replacing the default endpoint URL. See https://platform.openai.com/docs/models/ for the list of avaiable models."
+  },
+  "openaiConfigEndpointLabel": {
+    "message": "endpoint url"
+  },
+  "openaiConfigEndpointDescr": {
+    "message": "Custom URL of OpenAI-compatible API endpoint."
+  },
+  "openaiConfigEndpointError": {
+    "message": "Value should be a valid URL!"
+  },
+  "openaiConfigTokenLabel": {
+    "message": "API key"
+  },
+  "openaiConfigTokenDescr": {
+    "message": "Your OpenAI Token."
+  },
+  "openaiConfigTokenDefault": {
+    "message": "OPENAI_API_KEY"
+  },
+  "openaiConfigModelLabel": {
+    "message": "model"
+  },
+  "openaiConfigModelDescr": {
+    "message": "The model to use (see https://platform.openai.com/docs/models/ for the list of models)"
   }
 }

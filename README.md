@@ -12,7 +12,7 @@ This extension aims at giving full control to the user, including by supporting 
 - [ ] Support multiple providers
   - [X] ollama
   - [X] llama.cpp
-  - [ ] OpenAI and OpenAI-compatible APIs
+  - [X] OpenAI and OpenAI-compatible APIs
 - [X] Configurable quick actions
 - [ ] Complete i18n with at least english and french
 - [X] Visual indicator when waiting for model
