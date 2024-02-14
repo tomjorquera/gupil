@@ -4,6 +4,24 @@ Promise.all([
   import("/modules/configuration.mjs"),
 ]).then(async (modules) => {
   const [action, messaging, config] = modules;
+
+  if (!(await config.chatIsConfigured())) {
+    // go to the options tab if open, else open it
+    const optionsUrl = (await chrome.management.getSelf()).optionsUrl
+    const existing = await chrome.tabs.query({
+      url: optionsUrl
+    });
+    if (existing.length > 0) {
+      chrome.tabs.update(existing[0].id, {active: true});
+    } else {
+      chrome.tabs.create({
+        active: true,
+        url: optionsUrl,
+      })
+    }
+    return;
+  }
+
   const currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
 
   const chatBtn = document.getElementById("action-chat");

@@ -154,6 +154,12 @@ async function setDefaultQA() {
   await chrome.storage.sync.set({ [VERSION] : VERSION_NUMBER})
 }
 
+/** Returns true if the chat config is done, false otherwise */
+export async function chatIsConfigured() {
+  const name = (await chrome.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  return !!name;
+}
+
 
 // Note: Cannot use await in init, chrome refuses await in background workers top-level
 
