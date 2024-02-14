@@ -69,7 +69,7 @@
     "message": "ollama"
   },
   "ollamaConfigEndpointLabel": {
-    "message": "endpoint url"
+    "message": "endpoint URL"
   },
   "ollamaConfigEndpointDescr": {
     "message": "URL of the ollama endpoint."
@@ -90,7 +90,7 @@
     "message": "llamacpp"
   },
   "llamacppConfigEndpointLabel": {
-    "message": "endpoint url"
+    "message": "endpoint URL"
   },
   "llamacppConfigEndpointDescr": {
     "message": "URL of the Llama.cpp web endpoint."
@@ -105,7 +105,7 @@
     "message": "Can also be used for OpenAI-compatible API endpoints, by replacing the default endpoint URL. See https://platform.openai.com/docs/models/ for the list of avaiable models."
   },
   "openaiConfigEndpointLabel": {
-    "message": "endpoint url"
+    "message": "endpoint URL"
   },
   "openaiConfigEndpointDescr": {
     "message": "Custom URL of OpenAI-compatible API endpoint."
