@@ -8,11 +8,7 @@ export class Ollama {
 
   static configuration = {
     name: chrome.i18n.getMessage("ollamaConfigName"),
-    description: `By default, ollama restrict web origins. In order to enable the extension to use ollama, you need to set the <code>OLLAMA_ORIGINS</code> environment variable as follow:
-<pre>
-OLLAMA_ORGINS=${chrome.runtime.getURL("").slice(0, -1)}
-</pre>
-See <a href="https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server">https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server</a> for how to configure environment variables with ollama.`,
+    description: chrome.i18n.getMessage("ollamaConfigDescr", chrome.runtime.getURL("").slice(0, -1)),
     builder: async (options) => new Ollama(options),
     options: [
       {
