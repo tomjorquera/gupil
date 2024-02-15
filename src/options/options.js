@@ -7,9 +7,7 @@ import("/modules/configuration.mjs").then(async (config) => {
   await refresh();
 
   async function refresh() {
-    const form = document.createElement("form");
-    form.setAttribute("class", "config");
-
+    providerConfig.innerHTML= "";
     const configurator = await config.getSelectedConfigurator();
 
     const selectProvider = document.createElement("select");
@@ -22,7 +20,6 @@ import("/modules/configuration.mjs").then(async (config) => {
     if (configurator) {
       selectProvider.value = configurator.name;
     }
-    form.appendChild(selectProvider);
 
     selectProvider.addEventListener("change", async () => {
       const selectedProvider = selectProvider.value
@@ -33,26 +30,17 @@ import("/modules/configuration.mjs").then(async (config) => {
       refresh();
     });
 
+    providerConfig.appendChild(selectProvider);
+
     if (configurator) {
-      const submit = document.createElement("button");
-      submit.setAttribute("type", "submit");
-      submit.innerText = chrome.i18n.getMessage("optionsSubmitBtn");
+      const form = document.createElement("form");
+      form.setAttribute("class", "config");
 
       const configuratorOptionValues = await addSectionForConfigurator(form);
       const commonOptionValues = await addSectionForCommonSettings(form);
       const qaValues = await addSectionForQA(form);
 
-      form.appendChild(submit);
-
-      form.addEventListener("change", (e) => {
-        e.preventDefault();
-        let valid = config.validateOptions(configuratorOptionValues);
-        valid = valid && config.validateOptions(commonOptionValues);
-        submit.disabled = !valid;
-        form.reportValidity();
-      });
-
-      form.addEventListener("submit", async (e) => {
+      form.addEventListener("change", async (e) => {
         e.preventDefault();
         let valid = config.validateOptions(configuratorOptionValues);
         valid = valid && config.validateOptions(commonOptionValues);
@@ -64,9 +52,8 @@ import("/modules/configuration.mjs").then(async (config) => {
           refresh();
         }
       });
+      providerConfig.appendChild(form);
     }
-    providerConfig.innerHTML= "";
-    providerConfig.appendChild(form);
   }
 
   async function addSectionForConfigurator(form) {

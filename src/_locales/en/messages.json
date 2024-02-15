@@ -5,9 +5,6 @@
   "cmdChat": {
     "message": "Chat"
   },
-  "optionsSubmitBtn": {
-    "message": "Save"
-  },
   "optionsNoProviderSelected": {
     "message": "-- Please select provider --"
   },
