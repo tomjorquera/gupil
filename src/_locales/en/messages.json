@@ -15,7 +15,7 @@
     "message": "system prompt"
   },
   "commonOptionSysDescr": {
-    "message": "System prompt used by the model.\nUse #PAGE_TEXT_CONTENT# as the placeholder to be replaced by the content of the page."
+    "message": "System prompt used by the model. Use #PAGE_TEXT_CONTENT# as the placeholder to be replaced by the content of the page."
   },
   "commonOptionSysDefault": {
     "message": "You are an in-browser assistant helping a user interact with a web page. Here is the page content #PAGE_TEXT_CONTENT#"
@@ -107,7 +107,7 @@
     "message": "openai"
   },
   "openaiConfigDescr": {
-    "message": "Can also be used for OpenAI-compatible API endpoints, by replacing the default endpoint URL. See https://platform.openai.com/docs/models/ for the list of avaiable models."
+    "message": "Can also be used for OpenAI-compatible API endpoints, by replacing the default endpoint URL.<br>See <a href=\"https://platform.openai.com/docs/models/\">https://platform.openai.com/docs/models/</a> for the list of avaiable models."
   },
   "openaiConfigEndpointLabel": {
     "message": "endpoint URL"
