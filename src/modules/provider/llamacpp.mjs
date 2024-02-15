@@ -8,7 +8,7 @@ export class LlamaCPP {
 
   static configuration = {
     name: chrome.i18n.getMessage("llamacppConfigName"),
-    description: "",
+    description: chrome.i18n.getMessage("llamacppConfigDescr"),
     builder: async (options) => new LlamaCPP(options),
     options: [
       {

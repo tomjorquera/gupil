@@ -94,6 +94,14 @@
   "llamacppConfigName": {
     "message": "llamacpp"
   },
+  "llamacppConfigDescr": {
+    "message": "Use the llama.cpp API server (see <a href=\"https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md\">https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md</a>).<br>Only ChatML-tuned models, such as Dolphin, OpenOrca, OpenHermes, OpenChat-3.5, etc can be used with this endpoint.",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
   "llamacppConfigEndpointLabel": {
     "message": "endpoint URL"
   },
