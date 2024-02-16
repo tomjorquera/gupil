@@ -7,8 +7,8 @@
   "description": "__MSG_extensionDescription__",
   "homepage_url": "https://github.com/tomjorquera/gupil",
   "icons": {
-    "48": "icons/gupil.svg",
-    "96": "icons/gupil.svg"
+    "96": "icons/gupil.png",
+    "128": "icons/gupil.svg"
   },
 
   "browser_specific_settings": {

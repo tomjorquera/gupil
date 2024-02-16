@@ -17,4 +17,4 @@ This extension aims at giving full control to the user, including by supporting 
 - [ ] Complete i18n with at least english and french
 - [X] Visual indicator when waiting for model
 - [X] Visual indicator when model error
-- [ ] Replace placeholder icon
+- [X] Replace placeholder icon
