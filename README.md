@@ -14,7 +14,7 @@ This extension aims at giving full control to the user, including by supporting 
   - [X] llama.cpp
   - [X] OpenAI and OpenAI-compatible APIs
 - [X] Configurable quick actions
-- [ ] Complete i18n with at least english and french
+- [X] Complete i18n with at least english and french
 - [X] Visual indicator when waiting for model
 - [X] Visual indicator when model error
 - [X] Replace placeholder icon

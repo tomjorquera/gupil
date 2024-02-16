@@ -1,0 +1,144 @@
+{
+  "extensionDescription": {
+    "message": "IA dans votre navigateur."
+  },
+  "cmdChat": {
+    "message": "Chat"
+  },
+  "optionsNoProviderSelected": {
+    "message": "-- Sélectionner un fournisseur --"
+  },
+  "commonOptionsLegend": {
+    "message": "options communes"
+  },
+  "commonOptionSysLabel": {
+    "message": "amorce système"
+  },
+  "commonOptionSysDescr": {
+    "message": "Amorce système utilisée par le modèle. Le marqueur #PAGE_TEXT_CONTENT# sera remplacé par le contenu de la page."
+  },
+  "commonOptionSysDefault": {
+    "message": "Tu es un assistant dans le navigateur aidant l'utilisteur à intéragir avec une page web. Voici le contenu de la page #PAGE_TEXT_CONTENT#"
+  },
+  "QuickActionsLegend": {
+    "message": "raccourcis"
+  },
+  "QuickActionLabel": {
+    "message": "raccourci"
+  },
+  "QuickActionDescrAlias": {
+    "message": "Alias du raccourci personnalisable."
+  },
+  "QuickActionDescrValue": {
+    "message": "Valeur du raccourci personnalisable."
+  },
+  "QuickActionDefaultAlias1": {
+    "message": "résumer"
+  },
+  "QuickActionDefaultValue1": {
+    "message": "Résume le contenu de la page s'il te plait."
+  },
+  "QuickActionDefaultAlias2": {
+    "message": "simplifier"
+  },
+  "QuickActionDefaultValue2": {
+    "message": "Explique le contenu de la page en terme simples s'il te plait."
+  },
+  "QuickActionDefaultAlias3": {
+    "message": "traduire"
+  },
+  "QuickActionDefaultValue3": {
+    "message": "Traduit le contenu de la page en français."
+  },
+  "QuickActionDefaultAlias4": {
+    "message": ""
+  },
+  "QuickActionDefaultValue4": {
+    "message": ""
+  },
+  "QuickActionDefaultAlias5": {
+    "message": ""
+  },
+  "QuickActionDefaultValue5": {
+    "message": ""
+  },
+  "ollamaConfigName": {
+    "message": "ollama"
+  },
+  "ollamaConfigDescr": {
+    "message": "Par défaut, ollama limite les origines web. Pour permettre à l'extension d'utiliser ollama, il est nécessaire de mettre la variable d'environnement <code>OLLAMA_ORIGINS</code> à la valeur suivante:<pre>OLLAMA_ORGINS=$URL$</pre>Voir <a href=\"https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server\">https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server</a> pour plus de détails sur comment configurer les variables d'environnement avec ollama.",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "ollamaConfigEndpointLabel": {
+    "message": "URL"
+  },
+  "ollamaConfigEndpointDescr": {
+    "message": "URL de ollama."
+  },
+  "ollamaConfigEndpointError": {
+    "message": "La valeur doit être une URL valide!"
+  },
+  "ollamaConfigModelLabel": {
+    "message": "modèle"
+  },
+  "ollamaConfigModelDescr": {
+    "message": "Nom du modèle, au format <model>:<tag>"
+  },
+  "ollamaConfigModelError": {
+    "message": "La valeur doit être au format <model>:<tag>"
+  },
+  "llamacppConfigName": {
+    "message": "llamacpp"
+  },
+  "llamacppConfigDescr": {
+    "message": "Utiliser le serveur d'API llama.cpp(voir <a href=\"https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md\">https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md</a>).<br>Seuls les modèles affinés via ChatML, comme Dolphin, OpenOrca, OpenHermes, OpenChat-3.5, etc. peuvent être utilisés avec ce fournisseur.",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "llamacppConfigEndpointLabel": {
+    "message": "URL"
+  },
+  "llamacppConfigEndpointDescr": {
+    "message": "URL du serveur Llama.cpp."
+  },
+  "llamacppConfigEndpointError": {
+    "message": "La valeur doit être une URL valide !"
+  },
+  "openaiConfigName": {
+    "message": "openai"
+  },
+  "openaiConfigDescr": {
+    "message": "Peut également être utilisé avec toute API compatible OpenAI, en replacant l'URL par défaut.<br>Voir <a href=\"https://platform.openai.com/docs/models/\">https://platform.openai.com/docs/models/</a> pour la liste des modèles dispnibles."
+  },
+  "openaiConfigEndpointLabel": {
+    "message": "URL"
+  },
+  "openaiConfigEndpointDescr": {
+    "message": "URL d'un service d'API compatible OpenAI."
+  },
+  "openaiConfigEndpointError": {
+    "message": "La valeur doit être une URL valide!"
+  },
+  "openaiConfigTokenLabel": {
+    "message": "jeton secret d'API"
+  },
+  "openaiConfigTokenDescr": {
+    "message": "Votre jeton secret pour l'API d'OpenAI"
+  },
+  "openaiConfigTokenDefault": {
+    "message": "JETON_API_OPENAI"
+  },
+  "openaiConfigModelLabel": {
+    "message": "modèle"
+  },
+  "openaiConfigModelDescr": {
+    "message": "Le modèle à utiliser (voir https://platform.openai.com/docs/models/ pour la liste des modèles)"
+  }
+}
