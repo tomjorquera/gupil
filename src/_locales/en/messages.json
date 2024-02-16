@@ -66,7 +66,7 @@
     "message": "ollama"
   },
   "ollamaConfigDescr": {
-    "message": "By default, ollama restrict web origins. In order to enable the extension to use ollama, you need to set the <code>OLLAMA_ORIGINS</code> environment variable as follow:<pre>OLLAMA_ORGINS=$URL$</pre>See <a href=\"https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server\">https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server</a> for how to configure environment variables with ollama.",
+    "message": "By default, ollama restricts web origins. In order to enable the extension to use ollama, you need to set the <code>OLLAMA_ORIGINS</code> environment variable as follow:<pre>OLLAMA_ORGINS=$URL$</pre>See <a href=\"https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server\">https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server</a> for how to configure environment variables with ollama.",
     "placeholders": {
       "url": {
         "content": "$1"
