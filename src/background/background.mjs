@@ -1,4 +1,4 @@
-import { onReadyMessage, sendRequest } from "/modules/messaging.mjs";
+import { onChatReadyMessage, sendChatRequest, sendCompletionRequest } from "/modules/messaging.mjs";
 import { getState, isWaiting, updateError, updateHistory, updateOngoing } from "/modules/state.mjs";
 import { getCommonSettings, getConfiguredProvider, getQuickActions, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
 
@@ -54,14 +54,14 @@ async function gupilChatMenu() {
     //chrome.sidePanel.open({ tab.id });
     ensureContentScriptIsLoaded(tab.id).then(() => {
       if (Object.hasOwn(associatedActions, info.menuItemId)) {
-        sendRequest(associatedActions[info.menuItemId]);
+        sendChatRequest(associatedActions[info.menuItemId]);
       }
     });
   });
 }
 gupilChatMenu();
 
-onReadyMessage(async (msg) => {
+onChatReadyMessage(async (msg) => {
   const { tabId, userContent, pageContent } = msg;
 
   const model = await getConfiguredProvider();

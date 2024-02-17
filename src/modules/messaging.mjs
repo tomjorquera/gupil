@@ -18,13 +18,13 @@
 import { updateError } from "/modules/state.mjs"
 
 /** Send a request for the current tab with user-provided content. */
-export async function sendRequest(userContent) {
+export async function sendChatRequest(userContent) {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   const tabId = tabs[0].id;
   try {
     await chrome.tabs.sendMessage(tabId, {
       tabId: tabId.toString(),
-      type: "contentquery",
+      type: "chatquery",
       userContent,
     });
   } catch (err) {
@@ -42,7 +42,7 @@ export function listenToPageContentRequests() {
     if (
       !(
         "type" in request &&
-        request.type == "contentquery" &&
+        request.type == "chatquery" &&
         !("pageContent" in request)
       )
     ) {
@@ -64,18 +64,18 @@ export function listenToPageContentRequests() {
 }
 
 /** Listen to complete requests and run some callback. */
-export function onReadyMessage(callback) {
+export function onChatReadyMessage(callback) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (
-      !(
+      (
         "type" in request &&
-        request.type == "contentquery" &&
-        "pageContent" in request
+          request.type == "chatquery" &&
+          "pageContent" in request
       )
     ) {
-      return false;
+      callback(request);
+      return Promise.resolve();
     }
-    callback(request);
-    return Promise.resolve();
+    return false;
   });
 }

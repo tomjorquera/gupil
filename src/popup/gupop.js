@@ -45,7 +45,7 @@ Promise.all([
           origins: [ currentTab.url ],
         });
         await action.ensureContentScriptIsLoaded(currentTab.id);
-        await messaging.sendRequest(selectedAction);
+        await messaging.sendChatRequest(selectedAction);
 
       };
       content.appendChild(actionButton);

@@ -80,7 +80,7 @@ Promise.all([
       origins: [ currentTab.url ],
     });
     await action.ensureContentScriptIsLoaded(currentTab.id);
-    await messaging.sendRequest(msg);
+    await messaging.sendChatRequest(msg);
   }
 
   const msgForm = document.getElementById("msg-form");
