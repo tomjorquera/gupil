@@ -4,11 +4,11 @@
  * The goal of this module is to abstract and centralize the message processing
  * pipeline that enriches requests with the page content before processing them.
  *
- * This pipeline is used as only content scripts may access the current tab
+ * This pipeline is required as only content scripts may access the current tab
  * content.
  *
- * I works in the following steps:
- * - caller send request with user content with `sendRequest`
+ * It works in the following steps:
+ * - caller send request with user content with `sendChatRequest`
  * - the request is captured by the content script with
  *  `listenToPageContentRequests`, which resend it with the page content`
  * - the background script receives the message with `onReadyMessage`
