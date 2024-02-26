@@ -2,6 +2,8 @@
  * This module handles configuration options
  */
 
+import * as storage from "/modules/storage.mjs"
+
 import { LlamaCPP } from "/modules/provider/llamacpp.mjs"
 import { Ollama } from "/modules/provider/ollama.mjs"
 import { OpenAI } from "/modules/provider/openai.mjs"
@@ -73,7 +75,7 @@ async function saveOptions(name, optionValues) {
   for (const [option, input] of optionValues) {
     newSettings[option.id] = input.value;
   }
-  await chrome.storage.sync.set({ [name]: newSettings });
+  await storage.sync.set({ [name]: newSettings });
 }
 
 /** Save the selected configurator options. */
@@ -94,44 +96,44 @@ export async function saveQuickActions(optionValues) {
   for (const [alias, value] of optionValues) {
     newSettings.push([alias.value, value.value]);
   }
-  await chrome.storage.sync.set({ [QUICK_ACTIONS]: newSettings });
+  await storage.sync.set({ [QUICK_ACTIONS]: newSettings });
 }
 
 /** Load saved options, or default values. */
 export async function loadOptions(name) {
-  return (await chrome.storage.sync.get(name))[name];
+  return (await storage.sync.get(name))[name];
 }
 
 /** Get a new instance of the selected provider. */
 export async function getConfiguredProvider() {
-  const name = (await chrome.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  const name = (await storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
   if (!name) {
     return null;
   }
-  const options = (await chrome.storage.sync.get(name))[name];
+  const options = (await storage.sync.get(name))[name];
   return await configuratorsByName[name].builder(options);
 }
 /**
  * Set the selected configurator.
  */
 export async function setSelectedConfigurator(name) {
-  await chrome.storage.sync.set({ [SELECTED_CONFIGURATION]: name});
+  await storage.sync.set({ [SELECTED_CONFIGURATION]: name});
 }
 
 /** Get the provided configured name in the options. */
 export async function getSelectedConfigurator() {
-  const name = (await chrome.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  const name = (await storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
   return await configuratorsByName[name];
 }
 
 /** Get defined common settings. */
 export async function getCommonSettings() {
-  return (await chrome.storage.sync.get(COMMON_SETTINGS))[COMMON_SETTINGS];
+  return (await storage.sync.get(COMMON_SETTINGS))[COMMON_SETTINGS];
 }
 
 /** Get defined quick actions. */
 export async function getQuickActions() {
-  return (await chrome.storage.sync.get(QUICK_ACTIONS))[QUICK_ACTIONS];
+  return (await storage.sync.get(QUICK_ACTIONS))[QUICK_ACTIONS];
 }
 
 /** Set entry settings to their default value. */
@@ -140,12 +142,12 @@ async function setDefaultSettingsForEntry(name, options) {
     for (const option of options) {
       configSettings[option.id] = option.default_value;
     }
-    await chrome.storage.sync.set({ [name] : configSettings})
+    await storage.sync.set({ [name] : configSettings})
 }
 
 /** Set default quick actions. */
 async function setDefaultQA() {
-  await chrome.storage.sync.set({ [QUICK_ACTIONS] : [
+  await storage.sync.set({ [QUICK_ACTIONS] : [
     [chrome.i18n.getMessage("quickActionDefaultAlias1"), chrome.i18n.getMessage("quickActionDefaultValue1")],
     [chrome.i18n.getMessage("quickActionDefaultAlias2"), chrome.i18n.getMessage("quickActionDefaultValue2")],
     [chrome.i18n.getMessage("quickActionDefaultAlias3"), chrome.i18n.getMessage("quickActionDefaultValue3")],
@@ -153,12 +155,12 @@ async function setDefaultQA() {
     [chrome.i18n.getMessage("quickActionDefaultAlias5"), chrome.i18n.getMessage("quickActionDefaultValue5")],
   ]})
 
-  await chrome.storage.sync.set({ [VERSION] : VERSION_NUMBER})
+  await storage.sync.set({ [VERSION] : VERSION_NUMBER})
 }
 
 /** Returns true if the chat config is done, false otherwise */
 export async function chatIsConfigured() {
-  const name = (await chrome.storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
+  const name = (await storage.sync.get(SELECTED_CONFIGURATION))[SELECTED_CONFIGURATION];
   return !!name;
 }
 

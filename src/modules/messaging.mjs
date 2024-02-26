@@ -15,14 +15,15 @@
  */
 
 
+import * as tabs from "/modules/tabs.mjs";
 import { updateError } from "/modules/state.mjs"
 
 /** Send a request for the current tab with user-provided content. */
 export async function sendChatRequest(userContent) {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const tabId = tabs[0].id;
+  const tabsRes = await tabs.query({ active: true, currentWindow: true });
+  const tabId = tabsRes[0].id;
   try {
-    await chrome.tabs.sendMessage(tabId, {
+    await tabs.sendMessage(tabId, {
       tabId: tabId.toString(),
       type: "chatquery",
       userContent,
@@ -42,15 +43,27 @@ export function listenToPageContentRequests() {
     if (
       !(
         "type" in request &&
-        request.type == "chatquery" &&
+          (request.type == "chatquery" || request.type == "completionquery") &&
         !("pageContent" in request)
       )
     ) {
       return false;
     }
+
+    let pageContent;
+    if (request.type == "chatquery") {
+      pageContent = document.getRootNode().body.innerText;
+    }
+    if (request.type == "completionquery") {
+      const activeElement = document.activeElement;
+      if (!(Object.hasOwn(activeElement, "type") || activeElement.type == "text")) {
+        return false;
+      }
+      pageContent = activeElement.value;
+    }
     const query = {
       ...request,
-      pageContent: document.getRootNode().body.innerText,
+      pageContent,
     };
     try {
       chrome.runtime.sendMessage(query);

@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Gupil",
   "version": "0.1.0",
 
@@ -17,18 +17,11 @@
     }
   },
 
-  "permissions": ["contextMenus", "sidePanel", "storage", "tabs"],
-  "optional_permissions": ["scripting"],
-  "optional_host_permissions": ["<all_urls>"],
+  "permissions": ["contextMenus", "scripting", "sidePanel", "storage", "tabs", "<all_urls>"],
 
   "web_accessible_resources": [
-    {
-      "matches": ["<all_urls>"],
-      "resources": [
-        "/modules/messaging.mjs",
-        "/modules/state.mjs"
-      ]
-    }
+    "/modules/messaging.mjs",
+    "/modules/state.mjs"
   ],
 
   "content_scripts": [
@@ -40,11 +33,11 @@
 
   "background": {
     "scripts": ["background/background.mjs"],
-    "service_worker": "background/background.mjs",
-    "type": "module"
+    "type": "module",
+    "persistent": false
   },
 
-  "action": {
+  "browser_action": {
     "default_icon": "icons/gupil.svg",
     "default_title": "Gupil",
     "default_popup": "popup/gupop.html",

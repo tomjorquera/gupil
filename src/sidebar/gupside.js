@@ -1,10 +1,11 @@
 Promise.all([
+  import("/modules/tabs.mjs"),
   import("/modules/action.mjs"),
   import("/modules/messaging.mjs"),
   import("/modules/state.mjs"),
 ]).then(async (modules) => {
 
-  const [action, messaging, state] = modules;
+  const [tabs, action, messaging, state] = modules;
 
   async function update(currentState) {
     if (currentState) {
@@ -24,7 +25,7 @@ Promise.all([
         appendIsTyping(contentBox);
       }
       contentBox.scrollTop = contentBox.scrollHeight;
-      currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+      currentTab = (await tabs.query({ active: true, currentWindow: true }))[0];
     }
   }
 
@@ -94,7 +95,7 @@ Promise.all([
     submit(msgText);
   });
 
-  let currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+  let currentTab = (await tabs.query({ active: true, currentWindow: true }))[0];
   state.listenToChanges(update);
 
   chrome.tabs.onActivated.addListener(

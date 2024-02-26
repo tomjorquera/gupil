@@ -1,14 +1,15 @@
 Promise.all([
+  import("/modules/tabs.mjs"),
   import("/modules/action.mjs"),
   import("/modules/messaging.mjs"),
   import("/modules/configuration.mjs"),
 ]).then(async (modules) => {
-  const [action, messaging, config] = modules;
+  const [tabs, action, messaging, config] = modules;
 
   if (!(await config.chatIsConfigured())) {
     // go to the options tab if open, else open it
     const optionsUrl = (await chrome.management.getSelf()).optionsUrl
-    const existing = await chrome.tabs.query({
+    const existing = await tabs.query({
       url: optionsUrl
     });
     if (existing.length > 0) {
@@ -22,7 +23,7 @@ Promise.all([
     return;
   }
 
-  const currentTab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+  const currentTab = (await tabs.query({ active: true, currentWindow: true }))[0];
 
   const chatBtn = document.getElementById("action-chat");
   chatBtn.onclick = () => action.openSidebar(currentTab.id);
@@ -40,10 +41,6 @@ Promise.all([
       actionButton.onclick = async (e) => {
         e.preventDefault();
         action.openSidebar(currentTab.id);
-        await chrome.permissions.request({
-          permissions: [ "scripting" ],
-          origins: [ currentTab.url ],
-        });
         await action.ensureContentScriptIsLoaded(currentTab.id);
         await messaging.sendChatRequest(selectedAction);
 

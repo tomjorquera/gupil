@@ -1,10 +1,12 @@
 /**
  * This module handle state of user sessions
  */
+import * as storage from "/modules/storage.mjs"
+import * as tabs from "/modules/tabs.mjs"
 
 async function currentTabId() {
   return (
-    await chrome.tabs.query({
+    await tabs.query({
       active: true,
       currentWindow: true,
     })
@@ -14,14 +16,14 @@ async function currentTabId() {
 async function updateState(tabId, state) {
   const newState = {};
   newState[tabId] = state;
-  chrome.storage.session.set(newState);
+  storage.session.set(newState);
 }
 
 /**
  * Get the state of the given tab.
  */
 export async function getState(tabId) {
-  const storedInfo = await chrome.storage.session.get(tabId);
+  const storedInfo = await storage.session.get(tabId);
   let currentState = storedInfo[tabId];
   if (!currentState) {
     currentState = {
@@ -46,7 +48,7 @@ export async function currentTabState() {
  * listen to changes in current tab state
  */
 export function listenToChanges(callback) {
-  chrome.storage.onChanged.addListener(async (changes) => {
+  storage.session.onChanged.addListener(async (changes) => {
     const tabId = await currentTabId();
     if (tabId in changes) {
       callback(changes[tabId].newValue);

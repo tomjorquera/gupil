@@ -1,4 +1,5 @@
-import { onChatReadyMessage, sendChatRequest, sendCompletionRequest } from "/modules/messaging.mjs";
+import * as tabs from "/modules/tabs.mjs";
+import { onChatReadyMessage, sendChatRequest } from "/modules/messaging.mjs";
 import { getState, isWaiting, updateError, updateHistory, updateOngoing } from "/modules/state.mjs";
 import { getCommonSettings, getConfiguredProvider, getQuickActions, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
 
@@ -23,7 +24,7 @@ async function gupilChatMenu() {
   let associatedActions = {};
   chrome.contextMenus.create({
     id: "cmd-chat",
-    contexts: ["action"],
+    contexts: ["browser_action"], // TODO: change browser_action to "action" in Manifest v3
     title: chrome.i18n.getMessage("cmdChat"),
   });
 
@@ -31,7 +32,7 @@ async function gupilChatMenu() {
   if (availableActions?.length) {
     chrome.contextMenus.create({
       id: "qa",
-      contexts: ["action", "page"],
+      contexts: ["browser_action", "page"], // TODO: change browser_action to "action" in Manifest v3
       title: chrome.i18n.getMessage("QuickActionsLegend"),
     });
 
@@ -41,7 +42,7 @@ async function gupilChatMenu() {
       }
       chrome.contextMenus.create({
         id: `qa-${alias}`,
-        contexts: ["action", "page"],
+        contexts: ["browser_action", "page"], // TODO: change browser_action to "action" in Manifest v3
         title: alias,
         parentId: "qa",
       });
@@ -60,6 +61,14 @@ async function gupilChatMenu() {
   });
 }
 gupilChatMenu();
+
+let currentTab;
+async function update() {
+  currentTab = (await tabs.query({ active: true, currentWindow: true }))[0];
+}
+chrome.tabs.onActivated.addListener(update);
+chrome.tabs.onUpdated.addListener(update);
+update()
 
 onChatReadyMessage(async (msg) => {
   const { tabId, userContent, pageContent } = msg;
