@@ -34,6 +34,20 @@ export async function sendChatRequest(userContent) {
   }
 }
 
+export async function sendCompletionRequest() {
+  const tabsRes = await tabs.query({ active: true, currentWindow: true });
+  const tabId = tabsRes[0].id;
+  try {
+    await tabs.sendMessage(tabId, {
+      tabId: tabId.toString(),
+      type: "completionquery",
+    });
+  } catch (err) {
+    await updateError(tabId.toString(), err);
+    throw err;
+  }
+}
+
 /** Listen to incomplete requests for a tab and resend them with tab content.
  *
  * (must be run from a content script)
@@ -56,7 +70,7 @@ export function listenToPageContentRequests() {
     }
     if (request.type == "completionquery") {
       const activeElement = document.activeElement;
-      if (!(Object.hasOwn(activeElement, "type") || activeElement.type == "text")) {
+      if (activeElement.type != "textarea") {
         return false;
       }
       pageContent = activeElement.value;
@@ -76,13 +90,30 @@ export function listenToPageContentRequests() {
   });
 }
 
-/** Listen to complete requests and run some callback. */
+/** Listen to complete chat requests and run some callback. */
 export function onChatReadyMessage(callback) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (
       (
         "type" in request &&
           request.type == "chatquery" &&
+          "pageContent" in request
+      )
+    ) {
+      callback(request);
+      return Promise.resolve();
+    }
+    return false;
+  });
+}
+
+/** Listen to complete completion requests and run some callback. */
+export function onCompletionReadyMessage(callback) {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (
+      (
+        "type" in request &&
+          request.type == "completionquery" &&
           "pageContent" in request
       )
     ) {

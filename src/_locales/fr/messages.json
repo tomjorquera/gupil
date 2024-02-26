@@ -11,14 +11,23 @@
   "commonOptionsLegend": {
     "message": "options communes"
   },
-  "commonOptionSysLabel": {
-    "message": "amorce système"
+  "commonOptionSysChatLabel": {
+    "message": "amorce système pour la discussion"
   },
-  "commonOptionSysDescr": {
-    "message": "Amorce système utilisée par le modèle. Le marqueur #PAGE_TEXT_CONTENT# sera remplacé par le contenu de la page."
+  "commonOptionSysChatDescr": {
+    "message": "Amorce système utilisée par le modèle pour la discussion. Le marqueur #PAGE_TEXT_CONTENT# sera remplacé par le contenu de la page."
   },
-  "commonOptionSysDefault": {
+  "commonOptionSysChatDefault": {
     "message": "Tu es un assistant dans le navigateur aidant l'utilisteur à intéragir avec une page web. Voici le contenu de la page #PAGE_TEXT_CONTENT#"
+  },
+  "commonOptionSysCompleteLabel": {
+    "message": "amorce système pour la complétion"
+  },
+  "commonOptionSysCompleteDescr": {
+    "message": "Amorce système utilisée par le modèle pour la compétion des zones de texte."
+  },
+  "commonOptionSysCompleteDefault": {
+    "message": "Complète le texte suivant"
   },
   "QuickActionsLegend": {
     "message": "raccourcis"

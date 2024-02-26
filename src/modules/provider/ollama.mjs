@@ -89,7 +89,7 @@ export class Ollama {
     }
   }
 
-  async *complete(prompt, options = {}) {
+  async *complete(prompt, sys, options = {}) {
     const response = await fetch(this.endpoint + Ollama.endpointComplete, {
       method: "POST",
       body: JSON.stringify({
@@ -98,7 +98,7 @@ export class Ollama {
         options,
         stream: true,
         raw: true,
-        sys: "Complete the following",
+        sys,
       }),
     });
 

@@ -8,8 +8,9 @@ import { LlamaCPP } from "/modules/provider/llamacpp.mjs"
 import { Ollama } from "/modules/provider/ollama.mjs"
 import { OpenAI } from "/modules/provider/openai.mjs"
 
-export const SYS_PROMPT = "systemprompt";
+export const SYS_PROMPT_CHAT = "systempromptchat";
 export const SYS_PROMPT_PLACEHOLDER = "#PAGE_TEXT_CONTENT#";
+export const SYS_PROMPT_COMPLETE = "systempromptcomplete";
 export const COMMON_SETTINGS = "_common_settings";
 export const QUICK_ACTIONS = "_quickaction";
 const SELECTED_CONFIGURATION = "_selected_configuration";
@@ -38,10 +39,18 @@ for (const configurator of configurators) {
  */
 export const commonOptions = [
   {
-    id: SYS_PROMPT,
-    label: chrome.i18n.getMessage("commonOptionSysLabel"),
-    description: chrome.i18n.getMessage("commonOptionSysDescr"),
-    default_value: chrome.i18n.getMessage("commonOptionSysDefault"),
+    id: SYS_PROMPT_CHAT,
+    label: chrome.i18n.getMessage("commonOptionSysChatLabel"),
+    description: chrome.i18n.getMessage("commonOptionSysChatDescr"),
+    default_value: chrome.i18n.getMessage("commonOptionSysChatDefault"),
+    htmlBuilder: () => document.createElement("textarea") ,
+    validate: (_) => { return { is_valid: true }; },
+  },
+  {
+    id: SYS_PROMPT_COMPLETE,
+    label: chrome.i18n.getMessage("commonOptionSysCompleteLabel"),
+    description: chrome.i18n.getMessage("commonOptionSysCompleteDescr"),
+    default_value: chrome.i18n.getMessage("commonOptionSysCompleteDefault"),
     htmlBuilder: () => document.createElement("textarea") ,
     validate: (_) => { return { is_valid: true }; },
   },

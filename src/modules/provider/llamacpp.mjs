@@ -71,7 +71,9 @@ export class LlamaCPP {
     }
   }
 
-  async *complete(prompt, options = {}) {
+  async *complete(prompt, sys, options = {}) {
+    // NOTE; llamacpp provide "true" completion endpoint,
+    // so we just ignore the sys prompt
     const response = await fetch(this.endpoint + LlamaCPP.endpointComplete, {
       method: "POST",
       body: JSON.stringify({

@@ -92,9 +92,9 @@ export class OpenAI {
 
 
 
-  async *complete(prompt, options = {}) {
+  async *complete(prompt, sys, options = {}) {
     const messages = [
-      { role: "system", content: "complete the following" },
+      { role: "system", content: sys },
       { role: "user", content: prompt },
     ];
 

@@ -11,14 +11,23 @@
   "commonOptionsLegend": {
     "message": "common options"
   },
-  "commonOptionSysLabel": {
-    "message": "system prompt"
+  "commonOptionSysChatLabel": {
+    "message": "system prompt for chat"
   },
-  "commonOptionSysDescr": {
-    "message": "System prompt used by the model. Use #PAGE_TEXT_CONTENT# as the placeholder to be replaced by the content of the page."
+  "commonOptionSysChatDescr": {
+    "message": "System prompt used by the model for chat. Use #PAGE_TEXT_CONTENT# as the placeholder to be replaced by the content of the page."
   },
-  "commonOptionSysDefault": {
+  "commonOptionSysChatDefault": {
     "message": "You are an in-browser assistant helping a user interact with a web page. Here is the page content #PAGE_TEXT_CONTENT#"
+  },
+  "commonOptionSysCompleteLabel": {
+    "message": "system prompt for completion"
+  },
+  "commonOptionSysCompleteDescr": {
+    "message": "System prompt used by the model for completion on text areas."
+  },
+  "commonOptionSysCompleteDefault": {
+    "message": "Complete the following"
   },
   "QuickActionsLegend": {
     "message": "quick actions"

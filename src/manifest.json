@@ -58,5 +58,14 @@
 
   "options_ui": {
     "page": "options/options.html"
+  },
+
+  "commands": {
+    "complete": {
+      "suggested_key": {
+        "default": "Alt+Q"
+      },
+      "description": "Autocomplete the current input field"
+    }
   }
 }

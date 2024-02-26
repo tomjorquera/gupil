@@ -1,7 +1,7 @@
 import * as tabs from "/modules/tabs.mjs";
-import { onChatReadyMessage, sendChatRequest } from "/modules/messaging.mjs";
+import { onChatReadyMessage, onCompletionReadyMessage, sendChatRequest, sendCompletionRequest } from "/modules/messaging.mjs";
 import { getState, isWaiting, updateError, updateHistory, updateOngoing } from "/modules/state.mjs";
-import { getCommonSettings, getConfiguredProvider, getQuickActions, SYS_PROMPT, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
+import { getCommonSettings, getConfiguredProvider, getQuickActions, SYS_PROMPT_CHAT, SYS_PROMPT_COMPLETE, SYS_PROMPT_PLACEHOLDER } from "/modules/configuration.mjs";
 
 import { ensureContentScriptIsLoaded, openSidebar } from "/modules/action.mjs";
 
@@ -69,6 +69,12 @@ async function update() {
 chrome.tabs.onActivated.addListener(update);
 chrome.tabs.onUpdated.addListener(update);
 update()
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command === "complete") {
+    await ensureContentScriptIsLoaded(currentTab.id);
+    sendCompletionRequest();
+  }
+});
 
 onChatReadyMessage(async (msg) => {
   const { tabId, userContent, pageContent } = msg;
@@ -83,7 +89,7 @@ onChatReadyMessage(async (msg) => {
   const settings = await getCommonSettings();
 
   try {
-    const sys_prompt = settings[SYS_PROMPT].replace(SYS_PROMPT_PLACEHOLDER, pageContent)
+    const sys_prompt = settings[SYS_PROMPT_CHAT].replace(SYS_PROMPT_PLACEHOLDER, pageContent);
 
     const sys = {
       role: "system",
@@ -109,6 +115,33 @@ onChatReadyMessage(async (msg) => {
       content: ongoingReply,
     });
     await updateOngoing(tabId, null);
+  } catch (err) {
+    await updateError(tabId, err);
+    throw err;
+  }
+});
+
+onCompletionReadyMessage(async (msg) => {
+  const { tabId, pageContent } = msg;
+
+  const model = await getConfiguredProvider();
+  if (!model) {
+    await updateError(tabId, {
+      message: "No provider configured! Please select a provider in the extension options.",
+    });
+    return;
+  }
+  const settings = await getCommonSettings();
+
+  try {
+    const sys_prompt = settings[SYS_PROMPT_COMPLETE];
+
+    let ongoingReply = "";
+    for await (const chunk of model.complete(pageContent, sys_prompt)) {
+      console.log(chunk);
+      ongoingReply += chunk;
+      await updateOngoing(tabId, ongoingReply);
+    }
   } catch (err) {
     await updateError(tabId, err);
     throw err;
