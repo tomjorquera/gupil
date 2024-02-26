@@ -1,5 +1,6 @@
 export class OpenAI {
   static endpointChat = "/v1/chat/completions";
+  static endpointComplete = OpenAI.endpointChat;
 
   constructor({endpoint, token, modelname}) {
     this.endpoint = endpoint;
@@ -57,6 +58,47 @@ export class OpenAI {
 
   async *chat(messages, options = {}) {
     const response = await fetch(this.endpoint + OpenAI.endpointChat, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${this.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: this.modelname,
+        messages,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(response.status + " " + response.statusText);
+    }
+
+    const decoder = new TextDecoder("utf-8");
+    for await (const chunk of response.body) {
+      const content = decoder.decode(chunk);
+      const entries = content.split("\n");
+      for (const entry of entries) {
+        if (entry == "" || entry == "data: [DONE]") {
+          continue;
+        }
+        const answer = JSON.parse(entry.replace("data: ", "")).choices[0];
+        if ("content" in answer.delta) {
+          yield answer.delta.content;
+        }
+      }
+    }
+  }
+
+
+
+  async *complete(prompt, options = {}) {
+    const messages = [
+      { role: "system", content: "complete the following" },
+      { role: "user", content: prompt },
+    ];
+
+    const response = await fetch(this.endpoint + OpenAI.endpointComplete, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${this.token}`,

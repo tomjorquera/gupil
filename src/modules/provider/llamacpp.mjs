@@ -1,5 +1,6 @@
 export class LlamaCPP {
   static endpointChat = "/v1/chat/completions";
+  static endpointComplete = "/completion";
 
   constructor({endpoint, modelname}) {
     this.endpoint = endpoint;
@@ -62,10 +63,40 @@ export class LlamaCPP {
         if (entry == "") {
           continue;
         }
-        // Llama.cpp prepends JSON data with `data: ` in streaming mode
         const answer = JSON.parse(entry.replace("data: ", "")).choices[0];
         if ("content" in answer.delta) {
           yield answer.delta.content;
+        }
+      }
+    }
+  }
+
+  async *complete(prompt, options = {}) {
+    const response = await fetch(this.endpoint + LlamaCPP.endpointComplete, {
+      method: "POST",
+      body: JSON.stringify({
+        model: this.modelname,
+        prompt,
+        options,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(response.status + " " + response.statusText);
+    }
+
+    const decoder = new TextDecoder("utf-8");
+    for await (const chunk of response.body) {
+      const content = decoder.decode(chunk);
+      const entries = content.split("\n");
+      for (const entry of entries) {
+        if (entry == "") {
+          continue;
+        }
+        const answer = JSON.parse(entry.replace("data: ", ""));
+        if (!answer.stop) {
+          yield answer.content;
         }
       }
     }
